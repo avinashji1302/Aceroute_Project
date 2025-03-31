@@ -1,0 +1,351 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.ace_routes.ace_routes"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+8-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml
+9        android:targetSdkVersion="33" />
+9-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:2:5-66
+11-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:2:22-64
+12    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+12-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:3:5-78
+12-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:3:22-76
+13    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+13-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:4:5-79
+13-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:4:22-77
+14    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+14-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:5:5-80
+14-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:5:22-78
+15    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+15-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:6:5-81
+15-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:6:22-78
+16    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+16-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:8:5-71
+16-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:8:22-68
+17    <!-- Optional: Add this permission if you want to use bluetooth telephony device like headset/earbuds -->
+18    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+18-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:10:5-80
+18-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:10:22-77
+19    <!-- Optional: Add this permission if you want to save your recordings in public folders -->
+20    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+20-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:8:5-71
+20-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:8:22-68
+21    <!--
+22         Required to query activities that can process text, see:
+23         https://developer.android.com/training/package-visibility and
+24         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+25
+26         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin.
+27    -->
+28    <queries>
+28-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:59:5-64:15
+29        <intent>
+29-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:60:9-63:18
+30            <action android:name="android.intent.action.PROCESS_TEXT" />
+30-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:61:13-72
+30-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:61:21-70
+31
+32            <data android:mimeType="text/plain" />
+32-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:62:13-50
+32-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:62:19-48
+33        </intent>
+34        <intent>
+34-->[androidx.media:media:1.4.1] /home/shipgig/.gradle/caches/transforms-3/282f2e79d92dd0f86456aac0eef06875/transformed/media-1.4.1/AndroidManifest.xml:25:9-27:18
+35            <action android:name="android.media.browse.MediaBrowserService" />
+35-->[androidx.media:media:1.4.1] /home/shipgig/.gradle/caches/transforms-3/282f2e79d92dd0f86456aac0eef06875/transformed/media-1.4.1/AndroidManifest.xml:26:13-79
+35-->[androidx.media:media:1.4.1] /home/shipgig/.gradle/caches/transforms-3/282f2e79d92dd0f86456aac0eef06875/transformed/media-1.4.1/AndroidManifest.xml:26:21-76
+36        </intent> <!-- Needs to be explicitly declared on Android R+ -->
+37        <package android:name="com.google.android.apps.maps" />
+37-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:33:9-64
+37-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:33:18-61
+38    </queries>
+39
+40    <uses-permission android:name="android.permission.CAMERA" />
+40-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:9:5-65
+40-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:9:22-62
+41
+42    <uses-feature android:name="android.hardware.camera" />
+42-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:11:5-60
+42-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:11:19-57
+43
+44    <uses-permission android:name="android.permission.FLASHLIGHT" />
+44-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:13:5-69
+44-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:13:22-66
+45    <uses-permission android:name="android.permission.BLUETOOTH" />
+45-->[com.github.canardoux:flutter_sound_core:9.11.3] /home/shipgig/.gradle/caches/transforms-3/19c6a0c74ca2be733cf53436baea0185/transformed/jetified-flutter_sound_core-9.11.3/AndroidManifest.xml:11:5-68
+45-->[com.github.canardoux:flutter_sound_core:9.11.3] /home/shipgig/.gradle/caches/transforms-3/19c6a0c74ca2be733cf53436baea0185/transformed/jetified-flutter_sound_core-9.11.3/AndroidManifest.xml:11:22-65
+46    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Include required permissions for Google Maps API to run. -->
+46-->[com.github.canardoux:flutter_sound_core:9.11.3] /home/shipgig/.gradle/caches/transforms-3/19c6a0c74ca2be733cf53436baea0185/transformed/jetified-flutter_sound_core-9.11.3/AndroidManifest.xml:12:5-68
+46-->[com.github.canardoux:flutter_sound_core:9.11.3] /home/shipgig/.gradle/caches/transforms-3/19c6a0c74ca2be733cf53436baea0185/transformed/jetified-flutter_sound_core-9.11.3/AndroidManifest.xml:12:22-65
+47    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+47-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:23:5-79
+47-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:23:22-76
+48
+49    <uses-feature
+49-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:26:5-28:35
+50        android:glEsVersion="0x00020000"
+50-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:27:9-41
+51        android:required="true" />
+51-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:28:9-32
+52
+53    <permission
+53-->[androidx.core:core:1.13.1] /home/shipgig/.gradle/caches/transforms-3/d43a1270987b8c4a1403f7ed20933727/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+54        android:name="com.ace_routes.ace_routes.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+54-->[androidx.core:core:1.13.1] /home/shipgig/.gradle/caches/transforms-3/d43a1270987b8c4a1403f7ed20933727/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+55        android:protectionLevel="signature" />
+55-->[androidx.core:core:1.13.1] /home/shipgig/.gradle/caches/transforms-3/d43a1270987b8c4a1403f7ed20933727/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+56
+57    <uses-permission android:name="com.ace_routes.ace_routes.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+57-->[androidx.core:core:1.13.1] /home/shipgig/.gradle/caches/transforms-3/d43a1270987b8c4a1403f7ed20933727/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+57-->[androidx.core:core:1.13.1] /home/shipgig/.gradle/caches/transforms-3/d43a1270987b8c4a1403f7ed20933727/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+58
+59    <application
+60        android:name="android.app.Application"
+60-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:19:9-42
+61        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+61-->[androidx.core:core:1.13.1] /home/shipgig/.gradle/caches/transforms-3/d43a1270987b8c4a1403f7ed20933727/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+62        android:icon="@mipmap/ic_launcher"
+62-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:20:9-43
+63        android:label="ace_routes"
+63-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:18:9-35
+64        android:largeHeap="true"
+64-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:16:9-33
+65        android:theme="@style/Theme.AppCompat.NoActionBar" >
+65-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:17:9-59
+66        <activity
+66-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:21:9-42:20
+67            android:name="com.ace_routes.ace_routes.MainActivity"
+67-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:22:13-41
+68            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+68-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:27:13-163
+69            android:exported="true"
+69-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:23:13-36
+70            android:hardwareAccelerated="true"
+70-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:28:13-47
+71            android:launchMode="singleTop"
+71-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:24:13-43
+72            android:taskAffinity=""
+72-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:25:13-36
+73            android:theme="@style/LaunchTheme"
+73-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:26:13-47
+74            android:windowSoftInputMode="adjustResize" >
+74-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:29:13-55
+75
+76            <!--
+77                 Specifies an Android theme to apply to this Activity as soon as
+78                 the Android process has started. This theme is visible to the user
+79                 while the Flutter UI initializes. After that, this theme continues
+80                 to determine the Window background behind the Flutter UI.
+81            -->
+82            <meta-data
+82-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:34:13-37:17
+83                android:name="io.flutter.embedding.android.NormalTheme"
+83-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:35:15-70
+84                android:resource="@style/NormalTheme" />
+84-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:36:15-52
+85
+86            <intent-filter>
+86-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:38:13-41:29
+87                <action android:name="android.intent.action.MAIN" />
+87-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:39:17-68
+87-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:39:25-66
+88
+89                <category android:name="android.intent.category.LAUNCHER" />
+89-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:40:17-76
+89-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:40:27-74
+90            </intent-filter>
+91        </activity>
+92        <!--
+93             Don't delete the meta-data below.
+94             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
+95        -->
+96        <meta-data
+96-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:45:9-47:33
+97            android:name="flutterEmbedding"
+97-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:46:13-44
+98            android:value="2" />
+98-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:47:13-30
+99        <!-- add by anupam -->
+100        <meta-data
+100-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:49:9-51:71
+101            android:name="com.google.android.maps.v2.API_KEY"
+101-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:50:13-62
+102            android:value="AIzaSyBEfghVDiDqUu2WgFmbDovafENRA2lMObQ" />
+102-->/home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/AndroidManifest.xml:51:13-68
+103
+104        <activity android:name="com.amolg.flutterbarcodescanner.BarcodeCaptureActivity" />
+104-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:18:9-91
+104-->[:flutter_barcode_scanner] /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:18:19-88
+105
+106        <provider
+106-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:11:9-19:20
+107            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+107-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:12:13-82
+108            android:authorities="com.ace_routes.ace_routes.flutter.image_provider"
+108-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:13:13-74
+109            android:exported="false"
+109-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:14:13-37
+110            android:grantUriPermissions="true" >
+110-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:15:13-47
+111            <meta-data
+111-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:16:13-18:75
+112                android:name="android.support.FILE_PROVIDER_PATHS"
+112-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:17:17-67
+113                android:resource="@xml/flutter_image_picker_file_paths" />
+113-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:18:17-72
+114        </provider> <!-- Trigger Google Play services to install the backported photo picker module. -->
+115        <service
+115-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:21:9-33:19
+116            android:name="com.google.android.gms.metadata.ModuleDependencies"
+116-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:22:13-78
+117            android:enabled="false"
+117-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:23:13-36
+118            android:exported="false" >
+118-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:24:13-37
+119            <intent-filter>
+119-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:26:13-28:29
+120                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+120-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:27:17-94
+120-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:27:25-91
+121            </intent-filter>
+122
+123            <meta-data
+123-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:30:13-32:36
+124                android:name="photopicker_activity:0:required"
+124-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:31:17-63
+125                android:value="" />
+125-->[:image_picker_android] /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:32:17-33
+126        </service>
+127        <service
+127-->[:geolocator_android] /home/shipgig/.pub-cache/hosted/pub.dev/geolocator_android-4.6.1/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:10:9-14:56
+128            android:name="com.baseflow.geolocator.GeolocatorLocationService"
+128-->[:geolocator_android] /home/shipgig/.pub-cache/hosted/pub.dev/geolocator_android-4.6.1/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:11:13-77
+129            android:enabled="true"
+129-->[:geolocator_android] /home/shipgig/.pub-cache/hosted/pub.dev/geolocator_android-4.6.1/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:12:13-35
+130            android:exported="false"
+130-->[:geolocator_android] /home/shipgig/.pub-cache/hosted/pub.dev/geolocator_android-4.6.1/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:13:13-37
+131            android:foregroundServiceType="location" />
+131-->[:geolocator_android] /home/shipgig/.pub-cache/hosted/pub.dev/geolocator_android-4.6.1/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:14:13-53
+132        <service
+132-->[:location] /home/shipgig/.pub-cache/hosted/pub.dev/location-6.0.2/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:13:9-17:56
+133            android:name="com.lyokone.location.FlutterLocationService"
+133-->[:location] /home/shipgig/.pub-cache/hosted/pub.dev/location-6.0.2/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:14:13-71
+134            android:enabled="true"
+134-->[:location] /home/shipgig/.pub-cache/hosted/pub.dev/location-6.0.2/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:15:13-35
+135            android:exported="false"
+135-->[:location] /home/shipgig/.pub-cache/hosted/pub.dev/location-6.0.2/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:16:13-37
+136            android:foregroundServiceType="location" />
+136-->[:location] /home/shipgig/.pub-cache/hosted/pub.dev/location-6.0.2/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:17:13-53
+137
+138        <activity
+138-->[:url_launcher_android] /home/shipgig/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.10/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:10:9-13:74
+139            android:name="io.flutter.plugins.urllauncher.WebViewActivity"
+139-->[:url_launcher_android] /home/shipgig/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.10/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:11:13-74
+140            android:exported="false"
+140-->[:url_launcher_android] /home/shipgig/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.10/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:12:13-37
+141            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" /> <!-- Needs to be explicitly declared on P+ -->
+141-->[:url_launcher_android] /home/shipgig/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.10/android/build/intermediates/merged_manifest/release/AndroidManifest.xml:13:13-71
+142        <uses-library
+142-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:39:9-41:40
+143            android:name="org.apache.http.legacy"
+143-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:40:13-50
+144            android:required="false" />
+144-->[com.google.android.gms:play-services-maps:18.2.0] /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:41:13-37
+145
+146        <activity
+146-->[com.google.android.gms:play-services-base:18.3.0] /home/shipgig/.gradle/caches/transforms-3/076c29a066fafca4d55d440af3528fa3/transformed/jetified-play-services-base-18.3.0/AndroidManifest.xml:20:9-22:45
+147            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+147-->[com.google.android.gms:play-services-base:18.3.0] /home/shipgig/.gradle/caches/transforms-3/076c29a066fafca4d55d440af3528fa3/transformed/jetified-play-services-base-18.3.0/AndroidManifest.xml:20:19-85
+148            android:exported="false"
+148-->[com.google.android.gms:play-services-base:18.3.0] /home/shipgig/.gradle/caches/transforms-3/076c29a066fafca4d55d440af3528fa3/transformed/jetified-play-services-base-18.3.0/AndroidManifest.xml:22:19-43
+149            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+149-->[com.google.android.gms:play-services-base:18.3.0] /home/shipgig/.gradle/caches/transforms-3/076c29a066fafca4d55d440af3528fa3/transformed/jetified-play-services-base-18.3.0/AndroidManifest.xml:21:19-78
+150
+151        <meta-data
+151-->[com.google.android.gms:play-services-basement:18.3.0] /home/shipgig/.gradle/caches/transforms-3/7fc055c5336fb0dcb9500df328af490d/transformed/jetified-play-services-basement-18.3.0/AndroidManifest.xml:21:9-23:69
+152            android:name="com.google.android.gms.version"
+152-->[com.google.android.gms:play-services-basement:18.3.0] /home/shipgig/.gradle/caches/transforms-3/7fc055c5336fb0dcb9500df328af490d/transformed/jetified-play-services-basement-18.3.0/AndroidManifest.xml:22:13-58
+153            android:value="@integer/google_play_services_version" />
+153-->[com.google.android.gms:play-services-basement:18.3.0] /home/shipgig/.gradle/caches/transforms-3/7fc055c5336fb0dcb9500df328af490d/transformed/jetified-play-services-basement-18.3.0/AndroidManifest.xml:23:13-66
+154
+155        <uses-library
+155-->[androidx.window:window:1.2.0] /home/shipgig/.gradle/caches/transforms-3/4e39119eab39066523b1de14938fbe34/transformed/jetified-window-1.2.0/AndroidManifest.xml:23:9-25:40
+156            android:name="androidx.window.extensions"
+156-->[androidx.window:window:1.2.0] /home/shipgig/.gradle/caches/transforms-3/4e39119eab39066523b1de14938fbe34/transformed/jetified-window-1.2.0/AndroidManifest.xml:24:13-54
+157            android:required="false" />
+157-->[androidx.window:window:1.2.0] /home/shipgig/.gradle/caches/transforms-3/4e39119eab39066523b1de14938fbe34/transformed/jetified-window-1.2.0/AndroidManifest.xml:25:13-37
+158        <uses-library
+158-->[androidx.window:window:1.2.0] /home/shipgig/.gradle/caches/transforms-3/4e39119eab39066523b1de14938fbe34/transformed/jetified-window-1.2.0/AndroidManifest.xml:26:9-28:40
+159            android:name="androidx.window.sidecar"
+159-->[androidx.window:window:1.2.0] /home/shipgig/.gradle/caches/transforms-3/4e39119eab39066523b1de14938fbe34/transformed/jetified-window-1.2.0/AndroidManifest.xml:27:13-51
+160            android:required="false" />
+160-->[androidx.window:window:1.2.0] /home/shipgig/.gradle/caches/transforms-3/4e39119eab39066523b1de14938fbe34/transformed/jetified-window-1.2.0/AndroidManifest.xml:28:13-37
+161
+162        <provider
+162-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/shipgig/.gradle/caches/transforms-3/49e477daa3c737b6a3d3164dcc688c42/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:24:9-32:20
+163            android:name="androidx.startup.InitializationProvider"
+163-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/shipgig/.gradle/caches/transforms-3/49e477daa3c737b6a3d3164dcc688c42/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:25:13-67
+164            android:authorities="com.ace_routes.ace_routes.androidx-startup"
+164-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/shipgig/.gradle/caches/transforms-3/49e477daa3c737b6a3d3164dcc688c42/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:26:13-68
+165            android:exported="false" >
+165-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/shipgig/.gradle/caches/transforms-3/49e477daa3c737b6a3d3164dcc688c42/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:27:13-37
+166            <meta-data
+166-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/shipgig/.gradle/caches/transforms-3/49e477daa3c737b6a3d3164dcc688c42/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:29:13-31:52
+167                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+167-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/shipgig/.gradle/caches/transforms-3/49e477daa3c737b6a3d3164dcc688c42/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:30:17-78
+168                android:value="androidx.startup" />
+168-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/shipgig/.gradle/caches/transforms-3/49e477daa3c737b6a3d3164dcc688c42/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:31:17-49
+169            <meta-data
+169-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+170                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+170-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+171                android:value="androidx.startup" />
+171-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+172        </provider>
+173
+174        <receiver
+174-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+175            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+175-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+176            android:directBootAware="false"
+176-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+177            android:enabled="true"
+177-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+178            android:exported="true"
+178-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+179            android:permission="android.permission.DUMP" >
+179-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+180            <intent-filter>
+180-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+181                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+181-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+181-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+182            </intent-filter>
+183            <intent-filter>
+183-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+184                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+184-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+184-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+185            </intent-filter>
+186            <intent-filter>
+186-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+187                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+187-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+187-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+188            </intent-filter>
+189            <intent-filter>
+189-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+190                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+190-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+190-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+191            </intent-filter>
+192        </receiver>
+193    </application>
+194
+195</manifest>

@@ -1,0 +1,18 @@
+https://<url>/mobi?token=<token>&nspace=<nsp>&geo=<current lat,lon>&rid=<rid>&
+action=saveorderpart&
+oid=<orderID>&
+id=0&
+tid=<Type ID of Part>&
+qty=<Qty of Part>&
+sku=<sku entered>&
+stmp=<time in milli secs when user added Part>
+
+
+https://<url>/mobi?token=<token>&nspace=<nsp>&geo=<current lat,lon>&rid=<rid>&
+action=saveorderpart&
+oid=<orderID>&
+id=<id of Part that needs to be edited>&
+tid=<Type ID of Part>&
+qty=<Qty of Part>&
+sku=<sku entered>&
+stmp=<time in milli secs when user added Part>

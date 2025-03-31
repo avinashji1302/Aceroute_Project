@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.ace_routes.ace_routes.app-mergeReleaseResources-54:/values-watch-v20/values-watch-v20.xml",
+            "map": [
+                {
+                    "source": "/home/shipgig/.gradle/caches/transforms-3/f56261ca2f0497c8f41b4b78d512aeac/transformed/appcompat-1.2.0/res/values-watch-v20/values-watch-v20.xml",
+                    "from": {
+                        "startLines": "2,5,8",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,214,385",
+                        "endLines": "4,7,10",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "209,380,553"
+                    }
+                }
+            ]
+        }
+    ]
+}

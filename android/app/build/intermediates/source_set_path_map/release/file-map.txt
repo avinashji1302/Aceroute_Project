@@ -1,0 +1,59 @@
+com.ace_routes.ace_routes.app-jetified-play-services-base-18.3.0-0 /home/shipgig/.gradle/caches/transforms-3/076c29a066fafca4d55d440af3528fa3/transformed/jetified-play-services-base-18.3.0/res
+com.ace_routes.ace_routes.app-cardview-1.0.0-1 /home/shipgig/.gradle/caches/transforms-3/14cb99cd157b333aa065892a347138cd/transformed/cardview-1.0.0/res
+com.ace_routes.ace_routes.app-jetified-flutter_sound_core-9.11.3-2 /home/shipgig/.gradle/caches/transforms-3/19c6a0c74ca2be733cf53436baea0185/transformed/jetified-flutter_sound_core-9.11.3/res
+com.ace_routes.ace_routes.app-jetified-play-services-maps-18.2.0-3 /home/shipgig/.gradle/caches/transforms-3/26facdf2fa8a9fc61966bb3d5859b16a/transformed/jetified-play-services-maps-18.2.0/res
+com.ace_routes.ace_routes.app-media-1.4.1-4 /home/shipgig/.gradle/caches/transforms-3/282f2e79d92dd0f86456aac0eef06875/transformed/media-1.4.1/res
+com.ace_routes.ace_routes.app-coordinatorlayout-1.1.0-5 /home/shipgig/.gradle/caches/transforms-3/2bd522234faec2c8b8571612428a854d/transformed/coordinatorlayout-1.1.0/res
+com.ace_routes.ace_routes.app-jetified-datastore-1.0.0-6 /home/shipgig/.gradle/caches/transforms-3/300cb27947cf4c4b75d2b0f6881b9c70/transformed/jetified-datastore-1.0.0/res
+com.ace_routes.ace_routes.app-jetified-datastore-preferences-1.0.0-7 /home/shipgig/.gradle/caches/transforms-3/31548c3e7add49be265d80a0cd317968/transformed/jetified-datastore-preferences-1.0.0/res
+com.ace_routes.ace_routes.app-jetified-core-ktx-1.13.1-8 /home/shipgig/.gradle/caches/transforms-3/3970aa615321b2fc0290b1e844b7b99a/transformed/jetified-core-ktx-1.13.1/res
+com.ace_routes.ace_routes.app-jetified-annotation-experimental-1.4.0-9 /home/shipgig/.gradle/caches/transforms-3/3d559f84e57fd51ffe3549f730e7fdaf/transformed/jetified-annotation-experimental-1.4.0/res
+com.ace_routes.ace_routes.app-jetified-lifecycle-process-2.7.0-10 /home/shipgig/.gradle/caches/transforms-3/49e477daa3c737b6a3d3164dcc688c42/transformed/jetified-lifecycle-process-2.7.0/res
+com.ace_routes.ace_routes.app-jetified-window-1.2.0-11 /home/shipgig/.gradle/caches/transforms-3/4e39119eab39066523b1de14938fbe34/transformed/jetified-window-1.2.0/res
+com.ace_routes.ace_routes.app-lifecycle-livedata-core-2.7.0-12 /home/shipgig/.gradle/caches/transforms-3/55b194efc1ef09c17431c74853e427ce/transformed/lifecycle-livedata-core-2.7.0/res
+com.ace_routes.ace_routes.app-jetified-lifecycle-livedata-core-ktx-2.7.0-13 /home/shipgig/.gradle/caches/transforms-3/59124cefa308930bb6353a91b759156a/transformed/jetified-lifecycle-livedata-core-ktx-2.7.0/res
+com.ace_routes.ace_routes.app-transition-1.2.0-14 /home/shipgig/.gradle/caches/transforms-3/6274ef6675adc161291f254c229b98a4/transformed/transition-1.2.0/res
+com.ace_routes.ace_routes.app-jetified-profileinstaller-1.3.1-15 /home/shipgig/.gradle/caches/transforms-3/62b11bf718e444c15382a1fc8833b189/transformed/jetified-profileinstaller-1.3.1/res
+com.ace_routes.ace_routes.app-lifecycle-runtime-2.7.0-16 /home/shipgig/.gradle/caches/transforms-3/67957abc10f77ea7c1fd49628fda5655/transformed/lifecycle-runtime-2.7.0/res
+com.ace_routes.ace_routes.app-recyclerview-1.1.0-17 /home/shipgig/.gradle/caches/transforms-3/6e4fd62c9ac41775f888b741dc3b949a/transformed/recyclerview-1.1.0/res
+com.ace_routes.ace_routes.app-lifecycle-livedata-2.7.0-18 /home/shipgig/.gradle/caches/transforms-3/7428bbea6a7188e1563510ee7cb713e0/transformed/lifecycle-livedata-2.7.0/res
+com.ace_routes.ace_routes.app-jetified-appcompat-resources-1.2.0-19 /home/shipgig/.gradle/caches/transforms-3/7b85718d102020d85e9da8383286cff5/transformed/jetified-appcompat-resources-1.2.0/res
+com.ace_routes.ace_routes.app-jetified-play-services-basement-18.3.0-20 /home/shipgig/.gradle/caches/transforms-3/7fc055c5336fb0dcb9500df328af490d/transformed/jetified-play-services-basement-18.3.0/res
+com.ace_routes.ace_routes.app-jetified-core-1.0.0-21 /home/shipgig/.gradle/caches/transforms-3/83e735a9194e41934d0ef301b24ac3be/transformed/jetified-core-1.0.0/res
+com.ace_routes.ace_routes.app-jetified-tracing-1.2.0-22 /home/shipgig/.gradle/caches/transforms-3/89ae0773da89ea81a5fa7c64cdabb172/transformed/jetified-tracing-1.2.0/res
+com.ace_routes.ace_routes.app-browser-1.8.0-23 /home/shipgig/.gradle/caches/transforms-3/8b25f6d0743f88ecfb0e99c4f9fed689/transformed/browser-1.8.0/res
+com.ace_routes.ace_routes.app-jetified-savedstate-1.2.1-24 /home/shipgig/.gradle/caches/transforms-3/8e87bf02cfb2756aaaa0dc99d05034cb/transformed/jetified-savedstate-1.2.1/res
+com.ace_routes.ace_routes.app-lifecycle-viewmodel-2.7.0-25 /home/shipgig/.gradle/caches/transforms-3/a07381f25dc1562e6d8725b89748a185/transformed/lifecycle-viewmodel-2.7.0/res
+com.ace_routes.ace_routes.app-jetified-android-maps-utils-3.6.0-26 /home/shipgig/.gradle/caches/transforms-3/a10bb80711f431929dcd6f3892e4da5c/transformed/jetified-android-maps-utils-3.6.0/res
+com.ace_routes.ace_routes.app-jetified-window-java-1.2.0-27 /home/shipgig/.gradle/caches/transforms-3/b3fbf57816931731c69ce88a41b88d3f/transformed/jetified-window-java-1.2.0/res
+com.ace_routes.ace_routes.app-jetified-viewpager2-1.0.0-28 /home/shipgig/.gradle/caches/transforms-3/b4de218644ad18d75f5e1e8ae26b99ec/transformed/jetified-viewpager2-1.0.0/res
+com.ace_routes.ace_routes.app-core-runtime-2.2.0-29 /home/shipgig/.gradle/caches/transforms-3/bafa6b9ab05f1b5a391d0bba0e4e3050/transformed/core-runtime-2.2.0/res
+com.ace_routes.ace_routes.app-fragment-1.7.1-30 /home/shipgig/.gradle/caches/transforms-3/c37a7c303ab74d1310fc4c4b771489ab/transformed/fragment-1.7.1/res
+com.ace_routes.ace_routes.app-material-1.3.0-31 /home/shipgig/.gradle/caches/transforms-3/c6100275541baf433e6d93cf7dfcc762/transformed/material-1.3.0/res
+com.ace_routes.ace_routes.app-core-1.13.1-32 /home/shipgig/.gradle/caches/transforms-3/d43a1270987b8c4a1403f7ed20933727/transformed/core-1.13.1/res
+com.ace_routes.ace_routes.app-jetified-activity-1.9.1-33 /home/shipgig/.gradle/caches/transforms-3/d51677a71ff708cda8afe4ea9f074f61/transformed/jetified-activity-1.9.1/res
+com.ace_routes.ace_routes.app-jetified-startup-runtime-1.1.1-34 /home/shipgig/.gradle/caches/transforms-3/e7ab0ca18e38a7c5185a4ed43b5b5cd6/transformed/jetified-startup-runtime-1.1.1/res
+com.ace_routes.ace_routes.app-constraintlayout-2.0.1-35 /home/shipgig/.gradle/caches/transforms-3/f0364e48dd47994168c21e8943e8eb0c/transformed/constraintlayout-2.0.1/res
+com.ace_routes.ace_routes.app-appcompat-1.2.0-36 /home/shipgig/.gradle/caches/transforms-3/f56261ca2f0497c8f41b4b78d512aeac/transformed/appcompat-1.2.0/res
+com.ace_routes.ace_routes.app-jetified-lifecycle-viewmodel-savedstate-2.7.0-37 /home/shipgig/.gradle/caches/transforms-3/f81df2cbef760b03557d88ba06b3601f/transformed/jetified-lifecycle-viewmodel-savedstate-2.7.0/res
+com.ace_routes.ace_routes.app-packaged_res-38 /home/shipgig/.pub-cache/hosted/pub.dev/audioplayers_android-5.0.0/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-39 /home/shipgig/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-40 /home/shipgig/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.22/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-41 /home/shipgig/.pub-cache/hosted/pub.dev/flutter_sound-9.11.3/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-42 /home/shipgig/.pub-cache/hosted/pub.dev/geocoding_android-3.3.1/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-43 /home/shipgig/.pub-cache/hosted/pub.dev/geolocator_android-4.6.1/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-44 /home/shipgig/.pub-cache/hosted/pub.dev/google_maps_flutter_android-2.14.4/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-45 /home/shipgig/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+13/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-46 /home/shipgig/.pub-cache/hosted/pub.dev/location-6.0.2/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-47 /home/shipgig/.pub-cache/hosted/pub.dev/path_provider_android-2.2.10/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-48 /home/shipgig/.pub-cache/hosted/pub.dev/permission_handler_android-12.0.12/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-49 /home/shipgig/.pub-cache/hosted/pub.dev/shared_preferences_android-2.3.2/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-packaged_res-50 /home/shipgig/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.10/android/build/intermediates/packaged_res/release
+com.ace_routes.ace_routes.app-pngs-51 /home/shipgig/Desktop/Flutter Project/ace_routes/android/app/build/generated/res/pngs/release
+com.ace_routes.ace_routes.app-resValues-52 /home/shipgig/Desktop/Flutter Project/ace_routes/android/app/build/generated/res/resValues/release
+com.ace_routes.ace_routes.app-rs-53 /home/shipgig/Desktop/Flutter Project/ace_routes/android/app/build/generated/res/rs/release
+com.ace_routes.ace_routes.app-mergeReleaseResources-54 /home/shipgig/Desktop/Flutter Project/ace_routes/android/app/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
+com.ace_routes.ace_routes.app-mergeReleaseResources-55 /home/shipgig/Desktop/Flutter Project/ace_routes/android/app/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+com.ace_routes.ace_routes.app-merged_res-56 /home/shipgig/Desktop/Flutter Project/ace_routes/android/app/build/intermediates/merged_res/release
+com.ace_routes.ace_routes.app-main-57 /home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/main/res
+com.ace_routes.ace_routes.app-release-58 /home/shipgig/Desktop/Flutter Project/ace_routes/android/app/src/release/res
