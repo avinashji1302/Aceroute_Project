@@ -1,13 +1,11 @@
 import 'package:ace_routes/controller/audio_controller.dart';
+import 'package:ace_routes/controller/audio_player_controller.dart';
 import 'package:ace_routes/core/Constants.dart';
-import 'package:ace_routes/core/colors/Constants.dart';
-import 'package:ace_routes/view/appbar.dart';
+import 'package:ace_routes/view/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:siri_wave/siri_wave.dart';
-
 import '../controller/file_meta_controller.dart';
 
 class AudioRecord extends StatefulWidget {
@@ -22,12 +20,14 @@ class AudioRecord extends StatefulWidget {
 class _AudioRecordState extends State<AudioRecord> {
   final AudioController _controller = AudioController();
   final FileMetaController fileMetaController = Get.put(FileMetaController());
+  final AudioPlayerController audioPlayerController = Get.put(AudioPlayerController());
+  bool isUploading = false;
 
   @override
   void initState() {
     super.initState();
     _initController();
-    fileMetaController.fetchFileAudioDataFromDatabase();
+    fileMetaController.fetchFileAudioDataFromDatabase(widget.eventId.toString());
   }
 
   Future<void> _initController() async {
@@ -46,10 +46,8 @@ class _AudioRecordState extends State<AudioRecord> {
     final status = await Permission.microphone.request();
 
     if (status.isDenied) {
-      // Show a dialog or a snackbar asking the user to enable the permission
       _showPermissionDeniedDialog();
     } else if (status.isPermanentlyDenied) {
-      // Open app settings if the permission is permanently denied
       openAppSettings();
     }
   }
@@ -69,157 +67,171 @@ class _AudioRecordState extends State<AudioRecord> {
           TextButton(
             onPressed: () => openAppSettings(),
             child: const Text('Open Settings'),
+          ), TextButton(
+            onPressed: () => openAppSettings(),
+            child: const Text('Open Settings'),
           ),
         ],
       ),
     );
   }
+
+  /// **🔹 Upload Audio Files and Clear List**
+  Future<void> _uploadAudioFiles() async {
+    if (_controller.recordings.isEmpty) {
+      Get.snackbar("Error", "No recordings to upload.");
+      return;
+    }
+
+    setState(() => isUploading = true);
+
+    for (var recording in _controller.recordings) {
+      await _controller.uploadAudio(
+        recording,
+        widget.eventId.toString(),
+        "Recorded Event Audio",
+      );
+    }
+
+    // ✅ Store the last uploaded recording path
+    String lastRecordingPath = _controller.recordings.last;
+
+    // ✅ Clear recordings after upload
+    _controller.recordings.clear();
+
+    setState(() => isUploading = false);
+
+    // ✅ Fetch uploaded audio again to update UI
+    fileMetaController.fetchFileAudioDataFromDatabase(widget.eventId.toString());
+
+    // ✅ Show success dialog and pass the last uploaded recording path
+    _showSuccessDialog(lastRecordingPath);
+  }
+
+
+  void _showSuccessDialog(String recordingPath) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text("Upload Successful"),
+        content: Text("Your audio has been uploaded successfully!"),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await _controller.deleteRecording(recordingPath); // ✅ Delete the recording
+              setState(() {}); // ✅ Update UI after deletion
+
+              Get.back(); // ✅ Close Dialog
+              Get.offAll(() => HomeScreen()); // ✅ Navigate to HomeScreen
+            },
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    AllTerms.getTerm();
     return Scaffold(
-      appBar: myAppBar(
-          context: context,
-          titleText: AllTerms.audioLabel,
-          backgroundColor: MyColors.blueColor),
-      body: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(0.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Obx(() {
-              if (fileMetaController.fileMetaData.isEmpty) {
-                return Center(child: Text('No file meta data available.'));
-              }
-              return _buildFileMetaDataList();
-            }),
-            SizedBox(height: 20),
-            Container(
-                child: _controller.isRecording
-                    ? SiriWaveform.ios9(
-                  options: IOS9SiriWaveformOptions(
-                    height: 180,
-                    width: 360,
-                  ),
-                )
-                    : Text('')),
-            Icon(
-              Icons.mic,
-              size: 100,
-              color: _controller.isRecording ? Colors.green : Colors.black,
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _controller.isRecording
-                  ? () async {
-                await _controller.stopRecording();
-                setState(() {});
-              }
-                  : () async {
-                await _controller.startRecording();
-                setState(() {});
-              },
-              child: Text(_controller.isRecording
-                  ? 'Stop Recording'
-                  : 'Start Recording'),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: ListView.separated(
-                itemCount: _controller.recordings.length,
-                separatorBuilder: (context, index) =>
-                    SizedBox(height: 10), // Space between items
-
-                itemBuilder: (context, index) {
-                  final recordingPath = _controller.recordings[index];
-                  final isPlaying = _controller.playingPath == recordingPath;
-                  return Container(
-                    color: const Color.fromARGB(255, 211, 211, 211),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 0, right: 0, top: 8, bottom: 8),
-                      child: ListTile(
-                        title: GestureDetector(
-                            onTap: () {},
-                            child: Text('Recording ${index + 1}')),
-                        leading: IconButton(
-                          icon: Icon(
-                            isPlaying
-                                ? Icons.pause_circle_filled
-                                : Icons.play_arrow,
-                            color: Colors.black,
-                            size: 50,
-                          ),
-                          onPressed: () async {
-                            await _controller.togglePlayback(
-                              recordingPath,
-                                  () => setState(() {}),
-                            );
-                          },
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                            size: 40,
-                          ),
-                          onPressed: () async {
-                            await _controller.deleteRecording(recordingPath);
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text("Upload Audio", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue[900],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+            _controller.clearAudio();
+          },
         ),
-      ),
-    );
-  }
-
-  // Build file meta data list for images
-  Widget _buildFileMetaDataList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: fileMetaController.fileMetaData.length,
-      itemBuilder: (context, index) {
-        final fileMeta = fileMetaController.fileMetaData[index];
-        return _buildFileMetaBlock(context, index, fileMeta);
-      },
-    );
-  }
-
-  // Create the file metadata block (with the image name or icon)
-  Widget _buildFileMetaBlock(BuildContext context, int index, var fileMeta) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Stack(
-        children: [
-          Container(
-            height: 100,
-            width: 150,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Text(
-              fileMeta.fname ?? 'No Name',
-              style: TextStyle(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
+        actions: [
+          IconButton(
+            onPressed: isUploading ? null : _uploadAudioFiles,
+            icon: isUploading
+                ? Padding(
+              padding: EdgeInsets.all(5.0),
+              child: CircularProgressIndicator(color: Colors.white),
+            )
+                : Icon(Icons.cloud_upload, color: Colors.white),
           ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              icon: Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                // fileMetaController.deleteFileMeta(index);
+        ],
+      ),
+
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // 🎵 Display Uploaded Audio
+          Expanded(
+            child: Obx(() {
+              if (fileMetaController.fileMetaData.isEmpty) {
+                return Center(child: Text('No uploaded audio available.'));
+              }
+              return _buildUploadedAudioList();
+            }),
+          ),
+
+          // 🎙️ Live Recording Indicator
+          if (_controller.isRecording)
+            SiriWaveform.ios9(
+              options: IOS9SiriWaveformOptions(height: 100, width: 300),
+            ),
+
+          // 🎤 Mic Icon
+          Icon(
+            Icons.mic,
+            size: 80,
+            color: _controller.isRecording ? Colors.green : Colors.black,
+          ),
+
+          // 🎬 Record/Stop Button
+          ElevatedButton(
+            onPressed: _controller.isRecording
+                ? () async {
+              await _controller.stopRecording();
+              setState(() {});
+            }
+                : () async {
+              await _controller.startRecording();
+              setState(() {});
+            },
+            child: Text(_controller.isRecording ? 'Stop Recording' : 'Start Recording'),
+          ),
+
+          SizedBox(height: 20),
+
+          // 🎼 List of Local Recordings
+          Expanded(
+            child: ListView.separated(
+              itemCount: _controller.recordings.length,
+              separatorBuilder: (context, index) => SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final recordingPath = _controller.recordings[index];
+                final isPlaying = _controller.playingPath == recordingPath;
+                return ListTile(
+                  title: Text('Recording ${index + 1}'),
+                  leading: IconButton(
+                    icon: Icon(
+                      isPlaying ? Icons.pause_circle_filled : Icons.play_arrow,
+                      color: Colors.black,
+                      size: 40,
+                    ),
+                    onPressed: () async {
+                      await _controller.togglePlayback(
+                        recordingPath,
+                            () => setState(() {}),
+                      );
+                    },
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red, size: 40),
+                    onPressed: () async {
+                      await _controller.deleteRecording(recordingPath);
+                      setState(() {});
+                    },
+                  ),
+                );
               },
             ),
           ),
@@ -227,4 +239,41 @@ class _AudioRecordState extends State<AudioRecord> {
       ),
     );
   }
+
+  /// **🎵 Build List of Uploaded Audio**
+  Widget _buildUploadedAudioList() {
+    return Expanded( // ✅ Wrap ListView in Expanded
+      child: Obx(() {
+        if (fileMetaController.fileMetaData.isEmpty) {
+          return Center(child: Text('No uploaded audio available.'));
+        }
+
+        return ListView.builder(
+          shrinkWrap: true, // ✅ Ensures proper layout
+          itemCount: fileMetaController.fileMetaData.length,
+          itemBuilder: (context, index) {
+            final fileMeta = fileMetaController.fileMetaData[index];
+            final audioId = fileMeta.id.toString();
+            final isPlaying = audioPlayerController.currentAudioId.value == audioId;
+
+            return ListTile(
+              leading: Icon(Icons.audiotrack, color: Colors.blue, size: 40),
+              title: Text(fileMeta.fname ?? 'Unknown Audio'),
+              trailing: IconButton(
+                icon: Icon(
+                  isPlaying ? Icons.pause_circle_filled : Icons.play_arrow,
+                  color: isPlaying ? Colors.green : Colors.black,
+                  size: 40,
+                ),
+                onPressed: () {
+                  audioPlayerController.fetchAndPlayAudio(audioId);
+                },
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+
 }

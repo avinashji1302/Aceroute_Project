@@ -20,6 +20,7 @@ class EFormDataTable {
       )
     ''');
   }
+
   // Insert data method - Serialize formFields to JSON string before saving
   static Future<void> insertEForm(EFormDataModel eForm) async {
     final db = await DatabaseHelper().database;
@@ -35,8 +36,10 @@ class EFormDataTable {
       'updatedBy': eForm.updatedBy,
     };
 
-    await db.insert(tableName, data, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(tableName, data,
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
   static Future<void> insertMultipleEForms(List<EFormDataModel> eForms) async {
     final db = await DatabaseHelper().database;
     final batch = db.batch();
@@ -53,7 +56,8 @@ class EFormDataTable {
       };
 
       // Add insert operation to batch
-      batch.insert(tableName, data, conflictAlgorithm: ConflictAlgorithm.ignore);
+      batch.insert(tableName, data,
+          conflictAlgorithm: ConflictAlgorithm.ignore);
     }
 
     // Execute all the operations in the batch
@@ -80,9 +84,8 @@ class EFormDataTable {
       if (result != null) {
         // Deserialize formFields from JSON string to Map<String, dynamic>
         final formFieldsJson = result['formFields'];
-        final formFields = formFieldsJson != null
-            ? json.decode(formFieldsJson)
-            : {};
+        final formFields =
+            formFieldsJson != null ? json.decode(formFieldsJson) : {};
 
         return EFormDataModel(
           id: result['id'],
@@ -98,5 +101,13 @@ class EFormDataTable {
       print('Error while fetching EForm from the database: $e');
     }
     return null;
+  }
+
+  static Future<int> getEFormCountByTid(String tid) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM $tableName WHERE ftid = ?', [tid]);
+
+    return Sqflite.firstIntValue(result) ?? 0;
   }
 }

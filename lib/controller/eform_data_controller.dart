@@ -11,6 +11,8 @@ import 'event_controller.dart';
 
 class EFormDataController extends GetxController {
   // Fetch EForm from the server and parse it
+
+  var badgeCounts = <String, int>{}.obs;
   Future<List<EFormDataModel>?> fetchEForm() async {
     final List<Event> events = await EventTable.fetchEvents();
     if (events.isEmpty) {
@@ -23,7 +25,7 @@ class EFormDataController extends GetxController {
     final uri = Uri.parse(
         'https://$baseUrl/mobi?token=$token&nspace=$nsp&geo=$geo&rid=$rid&action=getorderform&oid=$eventId');
     var request = http.Request('GET', uri);
-  //  print('Fetching EForm URL: $uri');
+    //  print('Fetching EForm URL: $uri');
 
     try {
       final response = await request.send();
@@ -32,19 +34,23 @@ class EFormDataController extends GetxController {
         final responseData = await response.stream.bytesToString();
 
         // Debug: Print the raw XML data to inspect the response
-      //  print('Raw Response Data: $responseData');
+        //  print('Raw Response Data: $responseData');
 
         // Parse XML to extract relevant data manually
         final xmlDoc = XmlDocument.parse(responseData);
         final Map<String, dynamic> jsonData = _parseXmlToJson(xmlDoc);
 
         // Debug: Print the parsed JSON data to inspect the structure
-     //   print('Parsed JSON Data: ${json.encode(jsonData)}');
+        //   print('Parsed JSON Data: ${json.encode(jsonData)}');
 
         // Check if the structure is as expected and contains 'ofrm'
-        if (jsonData.containsKey('data') && jsonData['data'] != null && jsonData['data'] is Map) {
+        if (jsonData.containsKey('data') &&
+            jsonData['data'] != null &&
+            jsonData['data'] is Map) {
           final data = jsonData['data'];
-          if (data.containsKey('ofrm') && data['ofrm'] != null && data['ofrm'] is List) {
+          if (data.containsKey('ofrm') &&
+              data['ofrm'] != null &&
+              data['ofrm'] is List) {
             // Parse and save each 'ofrm' entry as an EForm
             List<EFormDataModel> eforms = [];
             for (var item in data['ofrm']) {
@@ -151,9 +157,14 @@ class EFormDataController extends GetxController {
     try {
       // Insert multiple EForms into the database
       await EFormDataTable.insertMultipleEForms(eforms);
-    //  print('Multiple EForms successfully saved to the database.');
+      //  print('Multiple EForms successfully saved to the database.');
     } catch (e) {
       print('Error while saving EForms to the database: $e');
     }
+  }
+
+  Future<void> fetchBadgeCount(String tid) async {
+    int count = await EFormDataTable.getEFormCountByTid(tid);
+    badgeCounts[tid] = count;
   }
 }

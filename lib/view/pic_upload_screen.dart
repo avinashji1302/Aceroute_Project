@@ -1,14 +1,15 @@
 import 'dart:io';
-import 'package:ace_routes/core/Constants.dart';
 import 'package:ace_routes/view/picture_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/file_meta_controller.dart';
 import '../controller/fontSizeController.dart';
 import '../controller/picUploadController.dart';
+import 'home_screen.dart';
 
 class PicUploadScreen extends StatefulWidget {
   final int eventId;
+
   PicUploadScreen({required this.eventId});
 
   @override
@@ -19,22 +20,21 @@ class _PicUploadScreenState extends State<PicUploadScreen> {
   final PicUploadController controller = Get.put(PicUploadController());
   final FileMetaController fileMetaController = Get.put(FileMetaController());
   final fontSizeController = Get.find<FontSizeController>();
+  bool isUploading = false;
 
   @override
   void initState() {
     super.initState();
-    fileMetaController.fetchFileImageDataFromDatabase();
+    fileMetaController.fetchFileImageDataFromDatabase(widget.eventId.toString());
   }
 
   @override
   Widget build(BuildContext context) {
-    AllTerms.getTerm();
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AllTerms.pictureLabel.value,
-          style: TextStyle(
-              color: Colors.white, fontSize: fontSizeController.fontSize),
+          "Upload Pictures",
+          style: TextStyle(color: Colors.white, fontSize: fontSizeController.fontSize),
         ),
         centerTitle: true,
         backgroundColor: Colors.blue[900],
@@ -45,85 +45,147 @@ class _PicUploadScreenState extends State<PicUploadScreen> {
             controller.clearImages();
           },
         ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              if (isUploading) return; // Prevent multiple clicks
+
+              setState(() {
+                isUploading = true; // Show loading indicator
+              });
+
+              bool success = await controller.uploadAllImages(widget.eventId.toString(), "1");
+
+              setState(() {
+                isUploading = false; // Hide loading indicator
+              });
+
+              if (success) {
+                _showSuccessDialog(); // ✅ Show success dialog after upload
+              } else {
+                Get.snackbar("Error", "Upload failed. Please try again.");
+              }
+            },
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: isUploading
+                  ? CircularProgressIndicator(color: Colors.white) // ✅ Show loader
+                  : Icon(Icons.file_upload_outlined, color: Colors.white),
+            ),
+          ),
+        ],
+
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Obx(() {
-              if (fileMetaController.fileMetaData.isEmpty) {
-                return Center(child: Text('No file meta data available.'));
-              }
-              return _buildFileMetaDataGrid(); // Updated to use a grid
+              return _buildFileMetaDataGrid(); // Display previously uploaded images
             }),
             SizedBox(height: 20),
             Expanded(
-              child: Obx(() {
-                return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Two images per row
-                    crossAxisSpacing: 40,
-                    mainAxisSpacing: 10,
-                  ),
-                  itemCount: controller.images.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == controller.images.length) {
-                      return GestureDetector(
-                        onTap: controller.pickImage,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.grey[800],
-                            size: 50,
-                          ),
+              child: Obx(() => GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.7, // Adjust for text input
+                ),
+                itemCount: controller.images.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == controller.images.length) {
+                    return GestureDetector(
+                      onTap: () async {
+                        await controller.pickImage(); // ✅ Pick image when tapped
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    } else {
-                      return GestureDetector(
-                        onTap: () {
-                          Get.to(() => FullScreenImageView(
-                              image: File(controller.images[index].path)));
-                        },
-                        onLongPress: () {
-                          controller.toggleSelection(index);
-                        },
-                        child: Obx(() {
-                          bool isSelected =
-                              controller.selectedIndices.contains(index);
-
-                          return Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: isSelected
-                                    ? Colors.red
-                                    : Colors.transparent,
-                                width: 3,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.file(
-                                File(controller.images[index].path),
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
-                            ),
-                          );
-                        }),
-                      );
-                    }
-                  },
-                );
-              }),
+                        child: Icon(Icons.camera_alt, color: Colors.grey[800], size: 50),
+                      ),
+                    );
+                  } else {
+                    return _buildImageCard(index);
+                  }
+                },
+              )),
             ),
+            /*SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => controller.uploadAllImages(widget.eventId.toString(), "1"),
+              child: Text("Upload All"),
+            ),*/
           ],
         ),
+      ),
+    );
+  }
+
+  // **Show Dialog for Image Description**
+  void _showDescriptionDialog(File imageFile, int index) {
+    TextEditingController descriptionController = TextEditingController();
+
+    Get.defaultDialog(
+      title: "Enter Image Description",
+      content: Column(
+        children: [
+          TextField(
+            controller: descriptionController,
+            decoration: InputDecoration(hintText: "Enter description..."),
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              String description = descriptionController.text.trim();
+              if (description.isEmpty) {
+                Get.snackbar("Error", "Please enter a description!");
+                return;
+              }
+              Get.back(); // Close dialog
+              controller.uploadImage(controller.images[index], widget.eventId.toString(), "1", description);
+            },
+            child: Text("Upload"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // **Widget to display each image with inputs**
+  Widget _buildImageCard(int index) {
+    return Card(
+      elevation: 3,
+      child: Column(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _showDescriptionDialog(controller.images[index], index),
+              //onTap: () => Get.to(() => FullScreenImageView(image: controller.images[index])),
+              child: Image.file(controller.images[index], fit: BoxFit.cover, width: double.infinity),
+            ),
+          ),
+          /*Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (val) => controller.setImageName(index, val),
+              decoration: InputDecoration(labelText: "Image Name"),
+            ),
+          ),*/
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (val) => controller.setImageDescription(index, val),
+              decoration: InputDecoration(labelText: "Description"),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.red),
+            onPressed: () => controller.deleteImage(index),
+          ),
+        ],
       ),
     );
   }
@@ -134,10 +196,10 @@ class _PicUploadScreenState extends State<PicUploadScreen> {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Show 2 per row
+        crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 1, // Adjust height-width ratio
+        childAspectRatio: 1,
       ),
       itemCount: fileMetaController.fileMetaData.length,
       itemBuilder: (context, index) {
@@ -147,7 +209,7 @@ class _PicUploadScreenState extends State<PicUploadScreen> {
     );
   }
 
-  // Create the file metadata block (without the delete icon)
+  // Create the file metadata block
   Widget _buildFileMetaBlock(var fileMeta) {
     return GestureDetector(
       onTap: () {
@@ -164,27 +226,48 @@ class _PicUploadScreenState extends State<PicUploadScreen> {
         ),
         alignment: Alignment.center,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               fileMeta.fname ?? 'No Name',
               style: TextStyle(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-            Center(
-              child: Text(
-                fileMeta.dtl ?? 'No Name',
-                style: TextStyle(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+            Text(
+              fileMeta.dtl ?? 'No Description',
+              style: TextStyle(fontSize: 12),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
     );
   }
+
+  /// ✅ Show Success Dialog
+  void _showSuccessDialog() {
+    Get.defaultDialog(
+      title: "Success",
+      content: Column(
+        children: [
+          Icon(Icons.check_circle, color: Colors.green, size: 50),
+          SizedBox(height: 10),
+          Text("Image uploaded successfully!", textAlign: TextAlign.center),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Get.back(); // Close Dialog
+              Get.offAll(() => HomeScreen()); // ✅ Navigate to HomeScreen
+            },
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
+
 
 class FullScreenImageView extends StatelessWidget {
   final File image;
@@ -209,3 +292,5 @@ class FullScreenImageView extends StatelessWidget {
     );
   }
 }
+
+

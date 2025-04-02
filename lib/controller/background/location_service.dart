@@ -98,7 +98,7 @@ void onStart(ServiceInstance service) async {
   await _sendDataToServer();
 
   // 🕒 Call API periodically
-  Timer.periodic(Duration(seconds: int.tryParse(syncIntervalMinutes) ?? 10),
+  Timer.periodic(Duration(minutes: int.tryParse(syncIntervalMinutes) ?? 10),
       (timer) async {
     await _startLocationUpdates();
     await _sendDataToServer();

@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:ace_routes/core/colors/Constants.dart';
+import 'package:ace_routes/database/Tables/login_response_table.dart';
 import 'package:ace_routes/database/databse_helper.dart';
+import 'package:ace_routes/model/login_model/login_response.dart';
 import 'package:ace_routes/model/order_data_model.dart';
-import 'package:ace_routes/pubnub/pubnub_service.dart';
+import 'package:ace_routes/controller/pubnub/pubnub_service.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:location/location.dart' as locationLib;
@@ -13,37 +15,42 @@ import 'package:http/http.dart' as http;
 
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:ace_routes/controller/background/location_service.dart';
-
 
 class HomeController extends GetxController {
   final Completer<GoogleMapController> mapController = Completer();
-   
+  String userNsp = '';
+  String subKey = '';
+
   LatLng currentLocation = LatLng(0, 0);
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    initializePubNub(nsp, rid);
+
+    await _pubnubInitalize();
   }
 
-  late PubNubService pubNubService;
+  Future<void> _pubnubInitalize() async {
+    List<LoginResponse> loginDataList =
+        await LoginResponseTable.fetchLoginResponses();
 
-  Future<void> initializePubNub(String namespace, String rid) async {
-    print("insitalize");
-    // Database db = await DatabaseHelper().database;
-    pubNubService = PubNubService(namespace: namespace, rid: rid);
-    
+    for (var data in loginDataList) {
+      subKey = data.subkey;
+      userNsp = data.nsp;
 
-    print("insitalize  $pubNubService");
-  }
+      print("$subKey is this subkry $userNsp");
+    }
 
-  void dispose() {
-    pubNubService.dispose();
+    PubNubService pubnubService = PubNubService(
+      userId: nsp + "-" + rid, // Replace with actual user ID
+      namespace: nsp, // Replace with actual namespace
+      subscriptionKey: subKey, // Replace with your actual key
+    );
+
+    print(" is this pubnubService $pubnubService");
   }
 
   Future<void> getCurrentLocation() async {

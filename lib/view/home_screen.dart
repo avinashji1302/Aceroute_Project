@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:ace_routes/controller/all_terms_controller.dart';
+import 'package:ace_routes/controller/eform_data_controller.dart';
 import 'package:ace_routes/controller/event_controller.dart';
 import 'package:ace_routes/controller/loginController.dart';
 import 'package:ace_routes/controller/map_controller.dart';
@@ -33,14 +34,7 @@ import '../controller/clockout/clockout_controller.dart';
 import '../controller/file_meta_controller.dart';
 import '../controller/fontSizeController.dart';
 import '../controller/getOrderPart_controller.dart';
-import '../database/Tables/OrderTypeDataTable.dart';
-import '../database/Tables/PartTypeDataTable.dart';
-import '../database/Tables/login_response_table.dart';
-import '../database/Tables/status_table.dart';
-import '../database/databse_helper.dart';
-import '../model/login_model/login_response.dart';
-import 'add_bw_from.dart';
-import 'add_part.dart';
+
 import 'directory_screen.dart';
 import 'map_screen.dart';
 
@@ -65,7 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final MapControllers mapControllers = Get.put(MapControllers());
   final controller = Get.put(GetOrderPartController());
   final ClockOut clockOut = Get.find<ClockOut>();
-
+  final EFormDataController eFormDataController =
+      Get.put(EFormDataController());
   List<bool> temp = [true, false];
 
   bool tapped = false;
@@ -73,12 +68,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    ever(eventController.events, (_) {
+      fetchFileMetaForAllEvents();
+    });
+    controller.orderPartsList.refresh();
+    eFormDataController.fetchEForm();
   }
 
   @override
   void dispose() {
     _positionStreamSubscription?.cancel();
     super.dispose();
+  }
+
+  void fetchFileMetaForAllEvents() {
+    for (var event in eventController.events) {
+      fileMetaController.fetchAndSaveFileMeta(event.id);
+    }
   }
 
   String formatEventDate(String? startDate) {
@@ -147,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 5,
         backgroundColor: Colors.white,
       ),
-      drawer:  DrawerWidget(),
+      drawer: DrawerWidget(),
       body: _showCard
           ? Obx(() {
               // Check if data is loading
@@ -546,9 +553,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     // EForm Type with Badge
                                     IconButtonWithBadge(
                                       icon: Icons.person_2_sharp,
-                                      badgeCount:
-                                          '0', // Replace with your dynamic count
+                                      badgeCount: eFormDataController
+                                              .badgeCounts[eventController
+                                                  .events[index].tid]
+                                              ?.toString() ??
+                                          '0',
                                       onPressed: () {
+                                        eFormDataController.fetchBadgeCount(
+                                            eventController.events[index]
+                                                .tid); // Fetch badge count dynamically
                                         Get.to(EFormScreen(
                                             tid: eventController
                                                 .events[index].tid));
@@ -560,94 +573,80 @@ class _HomeScreenState extends State<HomeScreen> {
                                     //************ Part Type**********
 
                                     // Part Type with Badge
-                                    IconButtonWithBadge(
-                                      icon: Icons.tips_and_updates,
-                                      badgeCount: "1",
-                                      // Replace with your dynamic count
-                                      onPressed: () {
-                                        Get.to(PartScreen(
-                                          oid: eventController.events[index].id,
-                                        ));
-                                      },
-                                      badgePositionLeft: 0,
-                                      badgePositionTop: 0,
-                                    ),
+                                    Obx(() => IconButtonWithBadge(
+                                          icon: Icons.tips_and_updates,
+                                          badgeCount: controller
+                                                  .orderPartsList.length
+                                                  .toString() ??
+                                              "0", // Dynamic count
+                                          onPressed: () {
+                                            Get.to(PartScreen(
+                                              oid: eventController
+                                                  .events[index].id,
+                                            ));
+                                          },
+                                          badgePositionLeft: 0,
+                                          badgePositionTop: 0,
+                                        )),
 
                                     // Part Type with Badge
-                                    IconButtonWithBadge(
-                                      icon: Icons.camera_alt_outlined,
-                                      badgeCount:
-                                          '3', // Replace with your dynamic count
-                                      onPressed: () async {
-                                        // Get the event ID
-                                        String eventId =
-                                            eventController.events[index].id;
-
-                                        // Fetch and save the file meta data
-                                        try {
-                                          await fileMetaController
-                                              .fetchAndSaveFileMeta(eventId);
-                                          // Navigate to the Signature screen after the API call succeeds
-                                          Get.to(() => PicUploadScreen(
-                                              eventId: int.parse(eventId)));
-                                        } catch (error) {
-                                          // Handle errors, e.g., show a snackbar or dialog
-                                          Get.snackbar(
-                                            'Error',
-                                            'Failed to fetch file metadata: $error',
-                                            backgroundColor: Colors.red,
-                                            colorText: Colors.white,
-                                          );
-                                        }
-                                      },
-                                      badgePositionLeft: 0,
-                                      badgePositionTop: 0,
-                                    ),
+                                    Obx(() => IconButtonWithBadge(
+                                          icon: Icons.camera_alt_outlined,
+                                          badgeCount: fileMetaController
+                                                  .imageCounts[eventController
+                                                      .events[index].id]
+                                                  ?.toString() ??
+                                              '0',
+                                          onPressed: () async {
+                                            String eventId = eventController
+                                                .events[index].id;
+                                            await fileMetaController
+                                                .fetchAndSaveFileMeta(eventId);
+                                            Get.to(() => PicUploadScreen(
+                                                eventId: int.parse(eventId)));
+                                          },
+                                          badgePositionLeft: 0,
+                                          badgePositionTop: 0,
+                                        )),
 
                                     // Part Type with Badge
-                                    IconButtonWithBadge(
-                                      icon: Icons.mic,
-                                      badgeCount:
-                                          '0', // Replace with your dynamic count
-                                      onPressed: () async {
-                                        // Get the event ID
-                                        String eventId =
-                                            eventController.events[index].id;
-
-                                        // Fetch and save the file meta data
-                                        try {
-                                          await fileMetaController
-                                              .fetchAndSaveFileMeta(eventId);
-                                          // Navigate to the Signature screen after the API call succeeds
-                                          Get.to(() => AudioRecord(
-                                              eventId: int.parse(eventId)));
-                                        } catch (error) {
-                                          // Handle errors, e.g., show a snackbar or dialog
-                                          Get.snackbar(
-                                            'Error',
-                                            'Failed to fetch file metadata: $error',
-                                            backgroundColor: Colors.red,
-                                            colorText: Colors.white,
-                                          );
-                                        }
-                                      },
-                                      badgePositionLeft: 0,
-                                      badgePositionTop: 0,
-                                    ),
+                                    Obx(() => IconButtonWithBadge(
+                                          icon: Icons.mic,
+                                          badgeCount: fileMetaController
+                                                  .audioCounts[eventController
+                                                      .events[index].id]
+                                                  ?.toString() ??
+                                              '0',
+                                          onPressed: () async {
+                                            String eventId = eventController
+                                                .events[index].id;
+                                            await fileMetaController
+                                                .fetchAndSaveFileMeta(eventId);
+                                            Get.to(() => AudioRecord(
+                                                eventId: int.parse(eventId)));
+                                          },
+                                          badgePositionLeft: 0,
+                                          badgePositionTop: 0,
+                                        )),
 
                                     // Part Type with Badge
-                                    IconButtonWithBadge(
-                                      icon: Icons.edit,
-                                      badgeCount:
-                                          '0', // Replace with your dynamic count
-                                      onPressed: () {
-                                        Get.to(() => Signature(
-                                            eventId: int.parse(eventController
-                                                .events[index].id)));
-                                      },
-                                      badgePositionLeft: 0,
-                                      badgePositionTop: 0,
-                                    ),
+                                    Obx(() => IconButtonWithBadge(
+                                          icon: Icons.edit,
+                                          badgeCount: fileMetaController
+                                                  .signatureCounts[
+                                                      eventController
+                                                          .events[index].id]
+                                                  ?.toString() ??
+                                              '0',
+                                          onPressed: () {
+                                            Get.to(() => Signature(
+                                                eventId: int.parse(
+                                                    eventController
+                                                        .events[index].id)));
+                                          },
+                                          badgePositionLeft: 0,
+                                          badgePositionTop: 0,
+                                        )),
                                   ],
                                 ),
                               ),

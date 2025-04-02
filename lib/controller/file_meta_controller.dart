@@ -1,19 +1,19 @@
 import 'dart:convert';
 import 'package:ace_routes/database/databse_helper.dart';
-
 import 'package:ace_routes/core/colors/Constants.dart';
 import 'package:ace_routes/model/file_meta_model.dart';
 import 'package:get/get.dart';
 import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
-
-import '../database/Tables/event_table.dart';
 import '../database/Tables/file_meta_table.dart';
-import 'event_controller.dart';
 
 class FileMetaController extends GetxController {
-
   RxList<FileMetaModel> fileMetaData = <FileMetaModel>[].obs;
+  RxMap<String, int> imageCounts =
+      <String, int>{}.obs; // Store count per eventId
+  RxMap<String, int> audioCounts = <String, int>{}.obs; // Audios per eventId
+  RxMap<String, int> signatureCounts =
+      <String, int>{}.obs; // Signatures per eventId
 
   RxBool isLoading = false.obs;
   Future<void> fetchAndSaveFileMeta(String eventId) async {
@@ -22,7 +22,7 @@ class FileMetaController extends GetxController {
 
       final uri = Uri.parse(
           'https://$baseUrl/mobi?token=$token&nspace=$nsp&geo=$geo&rid=$rid&action=getfilemeta&oid=$eventId');
-      print('Request URL: $uri');
+      print('Request URL : $uri');
 
       var request = http.Request('GET', uri);
       final response = await request.send();
@@ -53,8 +53,12 @@ class FileMetaController extends GetxController {
         print(
             'Parsed FileMeta List: ${jsonEncode(fileMetaList.map((e) => e.toJson()).toList())}');
 
+        // ✅ Save to database
         await FileMetaTable.insertMultipleFileMeta(fileMetaList, db);
         print('FileMeta successfully saved to the database.');
+
+        // ✅ Fetch updated file counts to reflect in UI
+        await fetchAllFileCounts(eventId);
       } else {
         print('Error: ${response.reasonPhrase}');
       }
@@ -63,52 +67,62 @@ class FileMetaController extends GetxController {
     }
   }
 
-  // Fetch Signature data from the database and update the observable list
-  Future<void> fetchFileSignatureDataFromDatabase() async {
+  /// 🖼 Fetch **Images** for a Specific Event (Job)
+  Future<void> fetchFileImageDataFromDatabase(String eventId) async {
     try {
       final data = await FileMetaTable.getAllFileMeta();
-      // Filter the data to only include fileMeta where tid == 2
-      fileMetaData.value =
-          data.where((fileMeta) => fileMeta.tid == "2").toList();
-      //fileMetaData.value = data;
+      List<FileMetaModel> imagesForEvent = data
+          .where((fileMeta) => fileMeta.tid == "1" && fileMeta.oid == eventId)
+          .toList();
 
-      print(
-          'Successfully Signature fetching data from database: ${fileMetaData.value}');
+      fileMetaData.value = imagesForEvent; // ✅ Update the observable list
+      imageCounts[eventId] = imagesForEvent.length;
+      fileMetaData.refresh();
+      print('Image count for event $eventId: ${imageCounts[eventId]}');
     } catch (e) {
-      print('Error fetching data from database: $e');
+      print('Error fetching image data: $e');
     }
   }
 
-  // Fetch Image data from the database and update the observable list
-  Future<void> fetchFileImageDataFromDatabase() async {
+  /// ✍ Fetch **Signatures** for a Specific Event (Job)
+  Future<void> fetchFileSignatureDataFromDatabase(String eventId) async {
     try {
       final data = await FileMetaTable.getAllFileMeta();
-      // Filter the data to only include fileMeta where tid == 2
-      fileMetaData.value =
-          data.where((fileMeta) => fileMeta.tid == "1").toList();
-      //fileMetaData.value = data;
+      List<FileMetaModel> signaturesForEvent = data
+          .where((fileMeta) => fileMeta.tid == "2" && fileMeta.oid == eventId)
+          .toList();
 
-      print(
-          'Successfully Image fetching data from database: ${fileMetaData.value}');
+      fileMetaData.value = signaturesForEvent; // ✅ Update the observable list
+      signatureCounts[eventId] = signaturesForEvent.length;
+      fileMetaData.refresh();
+      print('Signature count for event $eventId: ${signatureCounts[eventId]}');
     } catch (e) {
-      print('Error fetching data from database: $e');
+      print('Error fetching signature data: $e');
     }
   }
 
-  // Fetch Audio data from the database and update the observable list
-  Future<void> fetchFileAudioDataFromDatabase() async {
+  /// 🔊 Fetch **Audio** for a Specific Event (Job)
+  Future<void> fetchFileAudioDataFromDatabase(String eventId) async {
     try {
       final data = await FileMetaTable.getAllFileMeta();
-      // Filter the data to only include fileMeta where tid == 2
-      fileMetaData.value =
-          data.where((fileMeta) => fileMeta.tid == "3").toList();
-      //fileMetaData.value = data;
+      List<FileMetaModel> audiosForEvent = data
+          .where((fileMeta) => fileMeta.tid == "3" && fileMeta.oid == eventId)
+          .toList();
 
-      print(
-          'Successfully Audio fetching data from database: ${fileMetaData.value}');
+      fileMetaData.value = audiosForEvent; // ✅ Update the observable list
+      audioCounts[eventId] = audiosForEvent.length;
+      fileMetaData.refresh();
+      print('Audio count for event $eventId: ${audioCounts[eventId]}');
     } catch (e) {
-      print('Error fetching data from database: $e');
+      print('Error fetching audio data: $e');
     }
+  }
+
+  /// 🔄 Fetch **ALL** File Counts for a Job
+  Future<void> fetchAllFileCounts(String eventId) async {
+    await fetchFileImageDataFromDatabase(eventId);
+    await fetchFileSignatureDataFromDatabase(eventId);
+    await fetchFileAudioDataFromDatabase(eventId);
   }
 
   // Fetch raw data from the database table

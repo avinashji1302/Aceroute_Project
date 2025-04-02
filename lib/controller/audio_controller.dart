@@ -1,6 +1,11 @@
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:get/get.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import '../core/colors/Constants.dart'; // Replace with your actual constants file
 
 class AudioController {
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
@@ -11,6 +16,9 @@ class AudioController {
   String? _playingPath;
   bool _isPlaying = false;
 
+  var audio = <File>[].obs;
+  var selectedIndices = <int>[].obs;
+
   bool get isRecording => _isRecording;
   List<String> get recordings => _recordings;
   bool get isPlaying => _isPlaying;
@@ -20,15 +28,6 @@ class AudioController {
     await _recorder.openRecorder();
     await _player.openPlayer();
     await _loadRecordings();
-
-    // Listener for player state changes
-    _player.onProgress!.listen((e) {
-      if (e != null && e.duration != null && e.position != null) {
-        if (e.position! >= e.duration!) {
-          _stopPlayback();
-        }
-      }
-    });
   }
 
   Future<void> _loadRecordings() async {
@@ -64,7 +63,7 @@ class AudioController {
   Future<void> togglePlayback(String path, Function updateUI) async {
     if (_isPlaying && _playingPath == path) {
       await _stopPlayback();
-      updateUI(); // Update the UI when stopping playback
+      updateUI();
     } else {
       if (_isPlaying) {
         await _stopPlayback();
@@ -79,12 +78,12 @@ class AudioController {
       codec: Codec.aacADTS,
       whenFinished: () {
         _stopPlayback();
-        updateUI(); // Update the UI when playback finishes
+        updateUI();
       },
     );
     _isPlaying = true;
     _playingPath = path;
-    updateUI(); // Update the UI when starting playback
+    updateUI();
   }
 
   Future<void> _stopPlayback() async {
@@ -117,4 +116,61 @@ class AudioController {
     await _recorder.closeRecorder();
     await _player.closePlayer();
   }
+
+  /// **🔹 Upload Audio File to API**
+  Future<void> uploadAudio(String filePath, String eventId, String description) async {
+    try {
+      File audioFile = File(filePath);
+
+      if (!await audioFile.exists()) {
+        Get.snackbar("Error", "Audio file does not exist.");
+        return;
+      }
+
+      var url = Uri.parse("https://$baseUrl/fileupload");
+      var request = http.MultipartRequest("POST", url);
+
+      request.fields['token'] = token;
+      request.fields['nspace'] = nsp;
+      request.fields['geo'] = geo;
+      request.fields['rid'] = rid;
+      request.fields['oid'] = eventId;
+      request.fields['stmp'] = DateTime.now().millisecondsSinceEpoch.toString();
+      request.fields['tid'] = "3"; // ✅ Set type for audio
+      request.fields['mime'] = "aac"; // ✅ Set correct MIME type
+      request.fields['dtl'] = description;
+      request.fields['frmkey'] = "";
+      request.fields['frmfldid'] = "";
+
+      request.files.add(await http.MultipartFile.fromPath(
+        'binaryFile',
+        audioFile.path,
+        filename: "audio_${DateTime.now().millisecondsSinceEpoch}.aac",
+      ));
+
+      var response = await request.send();
+      var responseString = await response.stream.bytesToString();
+      print("🔹 Response: ${response.statusCode} - $responseString");
+
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(responseString);
+        Get.snackbar("Success", "Audio uploaded successfully!");
+        print("✅ Parsed Response: $jsonResponse");
+      } else {
+        print("❌ Error: ${response.reasonPhrase}");
+        Get.snackbar("Upload Failed", response.reasonPhrase ?? "Error");
+      }
+    } catch (e) {
+      print("❌ Exception: $e");
+      Get.snackbar("Upload Error", "Something went wrong.");
+    }
+  }
+
+  void clearAudio() {
+    audio.clear();
+    selectedIndices.clear();
+    audio.refresh(); // ✅ This updates the UI
+    selectedIndices.refresh(); // ✅ This updates the UI
+  }
+
 }

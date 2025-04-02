@@ -15,7 +15,7 @@ class GetMediaFile extends GetxController {
 
   Future<void> fetchMediaFile() async {
     final url =
-        'https://portal.aceroute.com/mobi?token=$token&nspace=$nsp&geo=<lat,lon>&rid=$rid&action=getfile&id=$id';
+        'https://$baseUrl/mobi?token=$token&nspace=$nsp&geo=$geo&rid=$rid&action=getfile&id=$id';
 
     print("Fetching media file...");
     final response = await http.get(Uri.parse(url));

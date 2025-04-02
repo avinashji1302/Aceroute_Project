@@ -1,19 +1,21 @@
+import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:ace_routes/core/Constants.dart';
-import 'package:ace_routes/core/colors/Constants.dart';
-import 'package:ace_routes/view/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'dart:ui' as ui;
 import 'package:ace_routes/controller/signature_controller.dart';
 import '../controller/file_meta_controller.dart';
-import '../database/databse_helper.dart';
+import '../controller/fontSizeController.dart';
+import '../controller/get_media_file.dart';
+import 'fullScreenSignatureView.dart';
+import 'home_screen.dart';
 
 class Signature extends StatefulWidget {
   final int eventId;
+
   Signature({required this.eventId});
+
   @override
   State<Signature> createState() => _SignatureState();
 }
@@ -22,21 +24,77 @@ class _SignatureState extends State<Signature> {
   final SignatureController signatureController =
       Get.put(SignatureController());
   final FileMetaController fileMetaController = Get.put(FileMetaController());
-
+  final fontSizeController = Get.find<FontSizeController>();
+  bool isUploading = false; // Track upload status
   final RxInt currentBlock = 0.obs;
+
   @override
   void initState() {
     super.initState();
-    fileMetaController.fetchFileSignatureDataFromDatabase();
+    fileMetaController
+        .fetchFileSignatureDataFromDatabase(widget.eventId.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(
+      /*appBar: myAppBar(
         context: context,
         titleText: AllTerms.signatureLabel,
         backgroundColor: MyColors.blueColor,
+      ),*/
+      appBar: AppBar(
+        title: Text(
+          "Upload Signatures",
+          style: TextStyle(
+              color: Colors.white, fontSize: fontSizeController.fontSize),
+        ),
+        backgroundColor: Colors.blue[900],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+            signatureController.clearImages();
+          },
+        ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              if (isUploading) return; // Prevent multiple clicks
+
+              setState(() {
+                isUploading = true; // Show loading indicator
+              });
+
+              if (signatureController.signatures.isEmpty) {
+                setState(() => isUploading = false);
+                Get.snackbar("Error", "No signatures to upload.");
+                return;
+              }
+
+              // Loop through each signature and upload it
+              for (var signature in signatureController.signatures) {
+                await signatureController.uploadSignature(
+                    signature,
+                    widget.eventId.toString(),
+                    "Signature Upload" // You can change description dynamically
+                    );
+              }
+
+              setState(() {
+                isUploading = false; // Hide loading indicator
+              });
+
+              _showSuccessDialog(); // ✅ Show success dialog after upload
+            },
+            icon: isUploading
+                ? Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: CircularProgressIndicator(color: Colors.white),
+                  )
+                : Icon(Icons.upload_file, color: Colors.white),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -74,7 +132,6 @@ class _SignatureState extends State<Signature> {
         child: Text('No signatures added yet.'),
       );
     }
-
     return Wrap(
       spacing: 16.0,
       runSpacing: 16.0,
@@ -93,7 +150,56 @@ class _SignatureState extends State<Signature> {
   }
 
   // Signature block UI (already defined in your code)
+
   Widget _buildSignatureBlock(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () async {
+        print("🔹 Tapped on Signature: Index $index");
+
+        if (signatureController.signatures.length > index) {
+          final ui.Image signatureImage = signatureController.signatures[index];
+
+          try {
+            // Convert ui.Image to Uint8List
+            ByteData? byteData =
+                await signatureImage.toByteData(format: ui.ImageByteFormat.png);
+
+            if (byteData != null) {
+              Uint8List imageData = byteData.buffer.asUint8List();
+
+              print(
+                  "✅ Successfully converted signature: ${imageData.length} bytes");
+
+              // Navigate to full-screen signature view
+              // Get.to(() => FullScreenSignatureView(signatureData: imageData));
+            } else {
+              print("❌ Failed to convert signature to byte data.");
+            }
+          } catch (e) {
+            print("❌ Error converting signature: $e");
+          }
+        } else {
+          print(
+              "❌ Invalid index: $index, Signature list length: ${signatureController.signatures.length}");
+        }
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 5.0),
+          Obx(() {
+            return signatureController.signatures.length > index
+                ? _buildSignatureDisplay(
+                    index, signatureController.signatures[index])
+                : SizedBox.shrink();
+          }),
+          SizedBox(height: 5.0),
+        ],
+      ),
+    );
+  }
+
+/*  Widget _buildSignatureBlock(BuildContext context, int index) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -122,7 +228,7 @@ class _SignatureState extends State<Signature> {
         SizedBox(height: 5.0),
       ],
     );
-  }
+  }*/
 
   // Signature dialog UI (already defined in your code)
   void _showSignatureDialog(BuildContext context, int index) {
@@ -183,34 +289,43 @@ class _SignatureState extends State<Signature> {
 
   // FileMeta display block UI (similar to _buildSignatureDisplay)
   Widget _buildFileMetaBlock(BuildContext context, int index, var fileMeta) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Stack(
-        children: [
-          Container(
-            height: 100,
-            width: 150,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(8.0),
+    return GestureDetector(
+      onTap: () {
+        print("xxxxxx");
+        print(fileMeta.id);
+        Get.to(FullScreenSignatureView(
+          id: fileMeta.id,
+        ));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Stack(
+          children: [
+            Container(
+              height: 100,
+              width: 150,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                fileMeta.fname ?? 'No Name',
+                style: TextStyle(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
             ),
-            child: Text(
-              fileMeta.fname ?? 'No Name',
-              style: TextStyle(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  //fileMetaController.deleteFileMeta(index);
+                },
+              ),
             ),
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              icon: Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                //fileMetaController.deleteFileMeta(index);
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -264,6 +379,68 @@ class _SignatureState extends State<Signature> {
           }
         },
         child: Text('Add Signature'),
+      ),
+    );
+  }
+
+  void _showSuccessDialog() {
+    Get.defaultDialog(
+      title: "Success",
+      content: Column(
+        children: [
+          Icon(Icons.check_circle, color: Colors.green, size: 50),
+          SizedBox(height: 10),
+          Text("Signatures uploaded successfully!",
+              textAlign: TextAlign.center),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Get.back(); // Close Dialog
+              Get.offAll(() => HomeScreen()); // ✅ Navigate to HomeScreen
+            },
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SignaturePreviewScreen extends StatelessWidget {
+  late String id;
+
+  SignaturePreviewScreen({super.key, required this.id});
+
+  @override
+  Widget build(BuildContext context) {
+    final GetMediaFile getMediaFile = Get.put(GetMediaFile(id: id));
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Picture View',
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.blue[900],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: Center(
+        child: Obx(() {
+          if (getMediaFile.imageUrl.isEmpty) {
+            return CircularProgressIndicator(); // Show loading until image is fetched
+          } else {
+            return Image.network(
+              getMediaFile.imageUrl.value,
+              fit: BoxFit.contain,
+            );
+          }
+        }),
       ),
     );
   }
