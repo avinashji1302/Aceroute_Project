@@ -31,15 +31,26 @@ class PubNubService {
     print("🔔 Subscribing to: $namespace");
 
     subscription = pubnub.subscribe(channels: {namespace});
-
-    // Listen for messages
     subscription.messages.listen((envelope) {
-      _handleMessage(envelope);
+      print("📩 New Message Received!");
+      print("🔹 Message Type: ${envelope.messageType}");
+      print("🔹 Payload: ${envelope.payload}");
     });
+    // print("subscription.channels  ${subscription.channels}");
+    // // Listen for messages
+    // subscription.messages.listen((envelope) {
+    //   print("envelope");
+    //   print(envelope);
+
+    //   _handleMessage(envelope);
+    // });
+
+    print("envelope aafer ");
   }
 
   /// ✅ Handle Incoming Messages
   void _handleMessage(Envelope envelope) {
+    print("inside handel message :::::");
     final message = envelope.payload;
     print("📩 New PubNub Message: $message");
 

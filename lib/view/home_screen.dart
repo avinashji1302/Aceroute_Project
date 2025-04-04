@@ -4,13 +4,16 @@ import 'package:ace_routes/controller/eform_data_controller.dart';
 import 'package:ace_routes/controller/event_controller.dart';
 import 'package:ace_routes/controller/loginController.dart';
 import 'package:ace_routes/controller/map_controller.dart';
+import 'package:ace_routes/controller/pubnub/pubnub_service.dart';
 import 'package:ace_routes/controller/status_updated_controller.dart';
 import 'package:ace_routes/core/Constants.dart';
 import 'package:ace_routes/core/colors/Constants.dart';
 import 'package:ace_routes/database/Tables/api_data_table.dart';
 import 'package:ace_routes/database/Tables/event_table.dart';
+import 'package:ace_routes/database/Tables/login_response_table.dart';
 import 'package:ace_routes/database/Tables/terms_data_table.dart';
 import 'package:ace_routes/database/Tables/version_api_table.dart';
+import 'package:ace_routes/model/login_model/login_response.dart';
 import 'package:ace_routes/view/audio.dart';
 import 'package:ace_routes/view/e_from.dart';
 import 'package:ace_routes/view/part.dart';
@@ -64,6 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
   List<bool> temp = [true, false];
 
   bool tapped = false;
+
+  String userNsp = '';
+  String subKey = '';
 
   @override
   void initState() {
@@ -549,8 +555,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    //added cunt  ******EForm Type*************
-                                    // EForm Type with Badge
                                     IconButtonWithBadge(
                                       icon: Icons.person_2_sharp,
                                       badgeCount: eFormDataController
@@ -569,8 +573,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       badgePositionLeft: 0,
                                       badgePositionTop: 0,
                                     ),
-
-                                    //************ Part Type**********
 
                                     // Part Type with Badge
                                     Obx(() => IconButtonWithBadge(
@@ -618,6 +620,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ?.toString() ??
                                               '0',
                                           onPressed: () async {
+                                            /*String eventId = eventController.events[index].id;
+          await fileMetaController.fetchAndSaveFileMeta(eventId);
+          Get.to(() => AudioRecord(eventId: int.parse(eventId)));*/
                                             String eventId = eventController
                                                 .events[index].id;
                                             await fileMetaController
@@ -638,7 +643,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           .events[index].id]
                                                   ?.toString() ??
                                               '0',
-                                          onPressed: () {
+                                          onPressed: () async {
                                             Get.to(() => Signature(
                                                 eventId: int.parse(
                                                     eventController
@@ -662,73 +667,6 @@ class _HomeScreenState extends State<HomeScreen> {
           : Container(
               child: MapScreen(),
             ),
-      bottomNavigationBar: Obx(() => BottomNavigationBar(
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.mail_rounded, size: 30),
-                label: 'Inbox',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.location_on_outlined, size: 30),
-                label: 'Map',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.watch_later_outlined, size: 30),
-                label: tapped ? 'Clocked In' : "Clocked Out",
-              ),
-            ],
-            currentIndex: homeController.selectedIndex.value,
-            selectedItemColor: Colors.amber[800],
-            unselectedItemColor: Colors.grey,
-            backgroundColor: Colors.blueAccent[300],
-            selectedLabelStyle:
-                TextStyle(fontSize: fontSizeController.fontSize),
-            unselectedLabelStyle:
-                TextStyle(fontSize: fontSizeController.fontSize * 0.9),
-            onTap: (index) {
-              setState(() {
-                if (index == 0) {
-                  _showCard = true; // Show card
-                } else if (index == 1) {
-                  // Map tab
-
-                  _showCard = false; // Hide card
-
-                  homeController.getCurrentLocation();
-                } else if (index == 2) {
-                  // Clocked In tab
-                  //  _showCard = false; // Hide card
-                  print('object');
-                  tapped = !tapped;
-                  // Find the first two events whose status is NOT "Completed"
-                  List<String> nonCompletedEventIds = eventController.events
-                      .where((event) =>
-                          eventController.nameMap[event.wkf] != "Completed")
-                      .map((event) => event.id)
-                      .take(2)
-                      .toList();
-
-                  String? lstoid = nonCompletedEventIds.isNotEmpty
-                      ? nonCompletedEventIds[0]
-                      : null;
-                  String? nxtoid = nonCompletedEventIds.length > 1
-                      ? nonCompletedEventIds[1]
-                      : null;
-
-                  // Execute action with filtered event IDs
-                  clockOut.executeAction(
-                      lstoid: lstoid, nxtoid: nxtoid, tid: tapped ? 1 : 2);
-
-                  print("clocked in lstoid  $lstoid  nxtoid $nxtoid  ");
-
-                  // clockOut.executeAction(tid: tapped ? 1 : 2);
-
-                  print("clocked in   $tapped");
-                }
-              });
-              homeController.onItemTapped(index);
-            },
-          )),
     );
   }
 }

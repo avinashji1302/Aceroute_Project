@@ -29,28 +29,39 @@ class HomeController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-
-    await _pubnubInitalize();
+    print("🚀 Initializing PubNub...");
+    await _pubnubInitialize();
   }
 
-  Future<void> _pubnubInitalize() async {
+  Future<void> _pubnubInitialize() async {
     List<LoginResponse> loginDataList =
         await LoginResponseTable.fetchLoginResponses();
+
+    if (loginDataList.isEmpty) {
+      print("⚠️ No login data found!");
+      return;
+    }
 
     for (var data in loginDataList) {
       subKey = data.subkey;
       userNsp = data.nsp;
 
-      print("$subKey is this subkry $userNsp");
+      print("🔑 Retrieved SubKey: $subKey");
+      print("📡 Retrieved Namespace: $userNsp");
+    }
+
+    if (subKey.isEmpty || userNsp.isEmpty) {
+      print("❌ Error: Missing Subscribe Key or Namespace");
+      return;
     }
 
     PubNubService pubnubService = PubNubService(
-      userId: nsp + "-" + rid, // Replace with actual user ID
-      namespace: nsp, // Replace with actual namespace
-      subscriptionKey: subKey, // Replace with your actual key
+      userId: userNsp + "-" + rid,
+      namespace: userNsp,
+      subscriptionKey: subKey,
     );
 
-    print(" is this pubnubService $pubnubService");
+    print("✅ PubNub Service Initialized: $pubnubService");
   }
 
   Future<void> getCurrentLocation() async {

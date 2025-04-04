@@ -16,6 +16,7 @@ class FileMetaController extends GetxController {
       <String, int>{}.obs; // Signatures per eventId
 
   RxBool isLoading = false.obs;
+
   Future<void> fetchAndSaveFileMeta(String eventId) async {
     try {
       final db = await DatabaseHelper().database;
@@ -59,6 +60,8 @@ class FileMetaController extends GetxController {
 
         // ✅ Fetch updated file counts to reflect in UI
         await fetchAllFileCounts(eventId);
+
+
       } else {
         print('Error: ${response.reasonPhrase}');
       }
@@ -108,7 +111,6 @@ class FileMetaController extends GetxController {
       List<FileMetaModel> audiosForEvent = data
           .where((fileMeta) => fileMeta.tid == "3" && fileMeta.oid == eventId)
           .toList();
-
       fileMetaData.value = audiosForEvent; // ✅ Update the observable list
       audioCounts[eventId] = audiosForEvent.length;
       fileMetaData.refresh();
@@ -130,4 +132,120 @@ class FileMetaController extends GetxController {
     final db = await DatabaseHelper().database;
     return await db.query('FileMetaTable');
   }
+
+  // ✅ Delete Media File
+
+  Future<bool> deleteMedia(String mediaId, String eventId) async {
+    try {
+      final String url = "https://portal.aceroute.com/mobi?"
+          "token=$token"
+          "&nspace=$nsp"
+          "&geo=$geo"
+          "&rid=$rid"
+          "&action=deletefile"
+          "&id=$mediaId"; // Media ID to delete
+
+      print("🔹 Delete Request URL: $url");
+
+      var request = http.Request('GET', Uri.parse(url));
+      http.StreamedResponse response = await request.send();
+
+      print("🔹 Response Status Code: ${response.statusCode}");
+      String responseBody = await response.stream.bytesToString();
+      print("🔹 Response Body: $responseBody");
+
+      if (response.statusCode == 200) {
+        // ✅ Remove media from UI list
+        fileMetaData.removeWhere((file) => file.id == mediaId);
+
+        // ✅ Decrease the image count
+        if (imageCounts.containsKey(eventId) && imageCounts[eventId]! > 0) {
+          imageCounts[eventId] = imageCounts[eventId]! - 1;
+        }
+
+        update(); // Refresh UI
+        print(
+            "✅ Media deleted successfully! New count: ${imageCounts[eventId]}");
+        return true;
+      } else {
+        print("❌ Failed to delete media: ${response.reasonPhrase}");
+        return false;
+      }
+    } catch (e) {
+      print("❌ Error deleting media: $e");
+      return false;
+    }
+  }
+
+/*  Future<void> deleteSignatureFromServer(String fileId) async {
+    final String url = "https://portal.aceroute.com/mobi?"
+        "token=$token"
+        "&nspace=$nsp"
+        "&geo=$geo"
+        "&rid=$rid"
+        "&action=deletefile"
+        "&id=$fileId";
+    print("🔹 Delete SIGN Request URL: $url");
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        fileMetaData.removeWhere((file) => file.id == fileId);
+
+        if (signatureCounts.containsKey(fileId) &&
+            signatureCounts[fileId]! > 0) {
+          signatureCounts[fileId] = signatureCounts[fileId]! - 1;
+        }
+        update();
+        print("✅ Signature deleted successfully.");
+        Get.snackbar("Success", "Signature deleted successfully.");
+      } else {
+        print("❌ Failed to delete signature: ${response.reasonPhrase}");
+        Get.snackbar("Error", "Failed to delete signature.");
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      Get.snackbar("Error", "An error occurred while deleting.");
+    }
+  }*/
+
+  Future<void> deleteSignatureFromServer(String fileId, String eventId) async {
+    final String url = "https://portal.aceroute.com/mobi?"
+        "token=$token"
+        "&nspace=$nsp"
+        "&geo=$geo"
+        "&rid=$rid"
+        "&action=deletefile"
+        "&id=$fileId";
+
+    print("🔹 Delete SIGN Request URL: $url");
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        // ✅ Remove signature from UI list
+        fileMetaData.removeWhere((file) => file.id == fileId);
+
+        // ✅ Decrease the signature count for the event
+        if (signatureCounts.containsKey(eventId) && signatureCounts[eventId]! > 0) {
+          signatureCounts[eventId] = signatureCounts[eventId]! - 1;
+        }
+
+        update(); // Refresh UI
+        print("✅ Signature deleted successfully.");
+        Get.snackbar("Success", "Signature deleted successfully.");
+      } else {
+        print("❌ Failed to delete signature: ${response.reasonPhrase}");
+        Get.snackbar("Error", "Failed to delete signature.");
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      Get.snackbar("Error", "An error occurred while deleting.");
+    }
+  }
+
+
+
 }

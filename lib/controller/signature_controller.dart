@@ -36,6 +36,7 @@ class SignatureController extends GetxController {
         });
       }
     }
+
   }
 
   Future<void> _saveSignatures() async {
@@ -161,6 +162,9 @@ class SignatureController extends GetxController {
       print("❌ Exception while fetching signatures: $e");
     }
   }
+
+
+
 
   Future<ui.Image> _convertBase64ToImage(String base64String) async {
     Uint8List bytes = base64Decode(base64String);

@@ -209,8 +209,13 @@ class _PicUploadScreenState extends State<PicUploadScreen> {
     );
   }
 
+
+
+
+
+
   // Create the file metadata block
-  Widget _buildFileMetaBlock(var fileMeta) {
+ /* Widget _buildFileMetaBlock(var fileMeta) {
     return GestureDetector(
       onTap: () {
         print(fileMeta.id);
@@ -243,6 +248,92 @@ class _PicUploadScreenState extends State<PicUploadScreen> {
       ),
     );
   }
+*/
+
+
+  Widget _buildFileMetaBlock(var fileMeta) {
+    return GestureDetector(
+      onTap: () {
+        print(fileMeta.id);
+        Get.to(PictureViewScreen(id: fileMeta.id));
+      },
+      child: Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 10),
+                Text(
+                  fileMeta.fname ?? 'No Name',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  fileMeta.dtl ?? 'No Description',
+                  style: TextStyle(fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+
+          /// ✅ Delete Icon Positioned at Top Left
+          Positioned(
+            top: 5,
+            right: 5,
+            child: IconButton(
+              icon: Icon(Icons.delete, color: Colors.red, size: 24),
+              onPressed: () => _showDeleteDialog(fileMeta.id, fileMeta.oid),
+
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Function to show the delete confirmation dialog
+  void _showDeleteDialog(String mediaId, String eventId) {
+    Get.defaultDialog(
+      title: "Confirm Deletion",
+      content: Text("Are you sure you want to delete this media file?"),
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(), // Cancel
+          child: Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            Get.back(); // Close dialog
+            int parsedMediaId = int.tryParse(mediaId) ?? 0;
+            if (parsedMediaId != 0) {
+              bool success = await fileMetaController.deleteMedia(mediaId, eventId);
+
+              if (success) {
+                Get.snackbar("Success", "Media deleted successfully!",
+                    backgroundColor: Colors.green, colorText: Colors.white);
+              } else {
+                Get.snackbar("Error", "Failed to delete media.",
+                    backgroundColor: Colors.red, colorText: Colors.white);
+              }
+            } else {
+              Get.snackbar("Error", "Invalid media ID",
+                  backgroundColor: Colors.red, colorText: Colors.white);
+            }
+          },
+          child: Text("OK"),
+        ),
+      ],
+    );
+  }
+
 
   /// ✅ Show Success Dialog
   void _showSuccessDialog() {
@@ -265,7 +356,6 @@ class _PicUploadScreenState extends State<PicUploadScreen> {
       ),
     );
   }
-
 }
 
 

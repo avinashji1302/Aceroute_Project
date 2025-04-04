@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'dart:ui' as ui;
 import 'package:ace_routes/controller/signature_controller.dart';
+import '../controller/event_controller.dart';
 import '../controller/file_meta_controller.dart';
 import '../controller/fontSizeController.dart';
 import '../controller/get_media_file.dart';
@@ -25,6 +26,8 @@ class _SignatureState extends State<Signature> {
       Get.put(SignatureController());
   final FileMetaController fileMetaController = Get.put(FileMetaController());
   final fontSizeController = Get.find<FontSizeController>();
+  final EventController eventController = Get.put(EventController());
+
   bool isUploading = false; // Track upload status
   final RxInt currentBlock = 0.obs;
 
@@ -319,8 +322,12 @@ class _SignatureState extends State<Signature> {
               right: 0,
               child: IconButton(
                 icon: Icon(Icons.delete, color: Colors.red),
+                // onPressed: () {
+                //   _showDeleteConfirmationDialog(context, index);
+                // },
                 onPressed: () {
-                  //fileMetaController.deleteFileMeta(index);
+                  String eventId = eventController.events[index].id; // Get event ID
+                  _showDeleteConfirmationDialog(context, index, eventId);
                 },
               ),
             ),
@@ -329,6 +336,29 @@ class _SignatureState extends State<Signature> {
       ),
     );
   }
+
+  void _showDeleteConfirmationDialog(BuildContext context, int index, String eventId) {
+    Get.defaultDialog(
+      title: "Delete Signature?",
+      middleText: "Are you sure you want to delete this signature?",
+      textConfirm: "Yes",
+      textCancel: "No",
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () {
+        if (index < fileMetaController.fileMetaData.length) {
+          String fileId = fileMetaController.fileMetaData[index].id;
+          fileMetaController.deleteSignatureFromServer(fileId, eventId);
+        }
+        Get.back(); // Close the dialog
+      },
+      onCancel: () => Get.back(),
+    );
+  }
+
+
+
+
 
   // Signature display widget (already defined in your code)
   Widget _buildSignatureDisplay(int index, ui.Image signature) {
@@ -444,4 +474,5 @@ class SignaturePreviewScreen extends StatelessWidget {
       ),
     );
   }
+
 }

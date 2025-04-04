@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 class GetMediaFile extends GetxController {
   var imageUrl = ''.obs;
   final String id;
+
   GetMediaFile({required this.id});
 
   @override
@@ -26,4 +27,8 @@ class GetMediaFile extends GetxController {
       print("Failed to load image, Status Code: ${response.statusCode}");
     }
   }
+
+
+
+
 }
