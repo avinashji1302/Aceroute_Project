@@ -31,9 +31,9 @@ class SummaryController extends GetxController {
 
     if (localEvent != null) {
       eventId.value = localEvent.id ?? '';
-      nm.value = localEvent.name ?? '';
-      startDate.value = localEvent.startDate ?? '';
-      endDate.value = localEvent.endDate ?? '';
+      nm.value = localEvent.nm ?? '';
+      startDate.value = localEvent.start_date ?? '';
+      endDate.value = localEvent.end_date ?? '';
 
       // Calculate the duration
       calculateDuration();

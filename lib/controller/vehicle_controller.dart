@@ -40,7 +40,7 @@ class VehicleController extends GetxController {
       // Fetch data from the database
       Event? localEvent = await EventTable.fetchEventById(id);
       List<OrderNoteModel> dbNote = await OrderNoteTable.fetchOrderNote();
-
+      print("dbNote noted $dbNote");
       // Debugging fetched notes
       if (dbNote.isNotEmpty) {
         //this data is from Note DataTable
@@ -56,7 +56,7 @@ class VehicleController extends GetxController {
       // Populate vehicle details
       if (localEvent != null) {
         //this data is coming from event database
-        vehicleDetail.value = localEvent.detail;
+        vehicleDetail.value = localEvent.dtl;
         registration.value = localEvent.po;
         odometer.value = localEvent.inv;
         faultDesc.value = localEvent.alt;
@@ -69,11 +69,11 @@ class VehicleController extends GetxController {
         pid = localEvent.pid;
 
         tid = localEvent.tid;
-        star_date = localEvent.startDate;
-        end_date = localEvent.endDate;
-        nm = localEvent.name;
+        star_date = localEvent.start_date;
+        end_date = localEvent.end_date;
+        nm = localEvent.nm;
 
-      //  print("wkf for edit: ${wkf}");
+        //  print("wkf for edit: ${wkf}");
       } else {
         print("No event data found for ID 77611.");
       }

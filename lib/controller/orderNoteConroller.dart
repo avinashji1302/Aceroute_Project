@@ -20,9 +20,8 @@ import 'event_controller.dart';
 class OrderNoteController extends GetxController {
   String oid = "";
 
-
   @override
-  void onInit()  {
+  void onInit() {
     super.onInit();
   }
 
@@ -30,26 +29,25 @@ class OrderNoteController extends GetxController {
     final apiUrl =
         "https://$baseUrl/mobi?token=$token&nspace=$nsp&geo=%3Clat,lon%3E&rid=$rid&action=getordernotes&oid=$oid";
 
-  //  print("API URL: $apiUrl");
-
+    //  print("API URL: $apiUrl");
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
-       // print("Raw XML response: ${response.body}");
+        // print("Raw XML response: ${response.body}");
 
         // Parse XML and convert to JSON manually
         final document = XmlDocument.parse(response.body);
         final dataElement = document.findAllElements('data').first.text.trim();
-        final jsonResponse = jsonEncode( dataElement);
+        final jsonResponse = jsonEncode(dataElement);
 
-       //  print("Converted JSON: ${jsonResponse}");
+      //  print("Converted JSON: ${jsonResponse}");
 
         // Save to the local database
         final orderNote = OrderNoteModel(data: jsonResponse);
         await OrderNoteTable.insertOrderNote(orderNote);
 
-      //  print("Note is inserted successfully");
+        print("Note is inserted successfully");
       } else {
         print("Failed to fetch order notes: ${response.statusCode}");
       }
@@ -58,7 +56,6 @@ class OrderNoteController extends GetxController {
     }
   }
 
-
   Future<void> fetchDetailsFromDb() async {
     List<TokenApiReponse> tokenDbData = await ApiDataTable.fetchData();
     List<LoginResponse> nspDbData =
@@ -66,10 +63,9 @@ class OrderNoteController extends GetxController {
     List<Event> eventDbData = await EventTable.fetchEvents();
     for (var data in eventDbData) {
       oid = data.id;
-    //  print("oid $oid");
+      //  print("oid $oid");
     }
 
     //print("data respectively : $oid , $token, $geo ,$rid");
   }
 }
-    

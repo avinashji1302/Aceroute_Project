@@ -15,7 +15,7 @@ class EventTable {
         start_date TEXT,
         etm TEXT,
         end_date TEXT,
-        name TEXT,
+        nm TEXT,
         wkf TEXT,
         alt TEXT,
         po TEXT,
@@ -24,7 +24,7 @@ class EventTable {
         pid TEXT,
         rid TEXT,
         ridcmt TEXT,
-        detail TEXT,
+        dtl TEXT,
         lid TEXT,
         cntid TEXT,
         flg TEXT,
@@ -69,7 +69,6 @@ class EventTable {
 
   // Insert event into the events table
   static Future<void> insertEvent(Event event) async {
-
     final db = await DatabaseHelper().database;
     fetchEvents();
     await db.insert(
@@ -104,8 +103,6 @@ class EventTable {
     return null;
   }
 
-
-
   // Update order by ID
   static Future<int> updateOrder(String orderId, String newWkf) async {
     final db = await DatabaseHelper().database;
@@ -113,7 +110,9 @@ class EventTable {
     // Define the SQL UPDATE statement
     int result = await db.update(
       'events', // Replace with your table name
-      {'wkf': newWkf}, // Replace 'column_name' with the name of the column to update
+      {
+        'wkf': newWkf
+      }, // Replace 'column_name' with the name of the column to update
       where: 'id = ?', // SQL WHERE clause to match the order ID
       whereArgs: [orderId], // Arguments for the WHERE clause
     );
@@ -123,29 +122,57 @@ class EventTable {
 
   //updating some data in event from vehicle details
 
-
 // Update order by ID
-  static Future<void> updateVehicle(String orderId, Map<String, String> updatedData) async {
+  static Future<void> updateVehicle(
+      String orderId, Map<String, String> updatedData) async {
     final db = await DatabaseHelper().database;
 
     // Define the SQL UPDATE statement
     int result = await db.update(
       'events', // Replace with your table name
       {
-        'detail': updatedData['details'],     // Update the 'wkf' column
+        'dtl': updatedData['dtl'], // Update the 'wkf' column
         'po': updatedData['registration'], // Update the 'status' column
         'inv': updatedData['odometer'],
-        'alt': updatedData['faultDesc'],// Update the 'amount' column
+        'alt': updatedData['faultDesc'], // Update the 'amount' column
       },
       where: 'id = ?', // SQL WHERE clause to match the order ID
       whereArgs: [orderId], // Arguments for the WHERE clause
     );
 
-
     print("succesfullt");
-
   }
 
+//update via pubnub
+  static Future<void> patchEventFields(
+      String eventId, Map<String, dynamic> updatedFields) async {
+    final db = await DatabaseHelper().database;
+    print(updatedFields);
+    print(eventId);
+    int result = await db.update(
+      tableName,
+      updatedFields,
+      where: 'id = ?',
+      whereArgs: [eventId],
+    );
+
+    if (result > 0) {
+      print('✅ Event $eventId updated with: $updatedFields');
+    } else {
+      print('⚠️ Failed to update event $eventId. Maybe not found?');
+    }
+  }
+
+  //DEleteing an event via pubnub
+
+  Future<void> deleteEvent(String id) async {
+    final db = await DatabaseHelper().database;
+
+    final response =
+        await db.delete(tableName, where: 'id = ?', whereArgs: [id]);
+
+    print("$response successfully deleted");
+  }
 
   // Clear all events
   static Future<void> clearEvents() async {

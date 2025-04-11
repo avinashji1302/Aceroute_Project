@@ -64,7 +64,7 @@ class EventController extends GetxController {
     //Fetching and saving note in db
     await orderNoteController.fetchDetailsFromDb();
     await orderNoteController.fetchOrderNotesFromApi();
-    print("above part type::");
+    //print("above part type::");
     //Order Part
     //  await getOrderPart.fetchOrderData();
 
@@ -76,7 +76,7 @@ class EventController extends GetxController {
   }
 
   Future<void> loadAllTerms() async {
-    print("Loading all terms...");
+    //print("Loading all terms...");
 
     await allTermsController.fetchStatusList();
     await allTermsController.fetchAndStoreOrderTypes();
@@ -93,7 +93,7 @@ class EventController extends GetxController {
   }
 
   Future<void> fetchEvents() async {
-    print("object");
+    //print("object");
     DateTime currentDate = DateTime.now();
     DateTime secondDate = currentDate.add(Duration(days: daysToAdd));
     String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(currentDate);
@@ -103,7 +103,7 @@ class EventController extends GetxController {
     var url =
         "https://$baseUrl/mobi?token=$token&nspace=$nsp&geo=$geo&rid=$rid&action=getorders&tz=Asia/Kolkata&from=${formattedCurrentDate}&to=${formattedSecondDate}";
 
-    // print("Fetching events from URL: $url");
+    // //print("Fetching events from URL: $url");
 
     try {
       var request = http.Request('GET', Uri.parse(url));
@@ -111,16 +111,16 @@ class EventController extends GetxController {
 
       if (response.statusCode == 200) {
         String xmlString = await response.stream.bytesToString();
-        // print("Raw XML response: $xmlString");
+      //   //print("Raw XML response: $xmlString");
 
         // Parse and store the events
         parseXmlResponse(xmlString);
         await loadEventsFromDatabase();
       } else {
-        print("Error fetching events: ${response.reasonPhrase}");
+        //print("Error fetching events: ${response.reasonPhrase}");
       }
     } catch (e) {
-      print("Error fetching events: $e");
+      //print("Error fetching events: $e");
     } finally {
       isLoading(false);
     }
@@ -134,10 +134,10 @@ class EventController extends GetxController {
       return Event(
         id: _getText(eventElement, 'id'),
         cid: _getText(eventElement, 'cid'),
-        startDate: _getText(eventElement, 'start_date'),
+        start_date: _getText(eventElement, 'start_date'),
         etm: _getText(eventElement, 'etm'),
-        endDate: _getText(eventElement, 'end_date'),
-        name: _getText(eventElement, 'nm'),
+        end_date: _getText(eventElement, 'end_date'),
+        nm: _getText(eventElement, 'nm'),
         wkf: _getText(eventElement, 'wkf'),
         alt: _getText(eventElement, 'alt'),
         po: _getText(eventElement, 'po'),
@@ -146,7 +146,7 @@ class EventController extends GetxController {
         pid: _getText(eventElement, 'pid'),
         rid: _getText(eventElement, 'rid'),
         ridcmt: _getText(eventElement, 'ridcmt'),
-        detail: _getText(eventElement, 'dtl'),
+        dtl: _getText(eventElement, 'dtl'),
         lid: _getText(eventElement, 'lid'),
         cntid: _getText(eventElement, 'cntid'),
         flg: _getText(eventElement, 'flg'),
@@ -184,15 +184,15 @@ class EventController extends GetxController {
     }).toList();
 
     for (Event event in fetchedEvents) {
-      //  print("Event is ${event.geo}");
+      //  //print("Event is ${event.geo}");
       EventTable.insertEvent(event);
-      // print("Event added to database: ${event.toJson()['id']}");
+      // //print("Event added to database: ${event.toJson()['id']}");
     }
 
     events.assignAll(fetchedEvents);
-    // print("Fetched and stored ${fetchedEvents.length} events");
-    // print(jsonEncode("${fetchedEvents[0]}"));
-    // print("  geo is ${events}");
+    // //print("Fetched and stored ${fetchedEvents.length} events");
+    // //print(jsonEncode("${fetchedEvents[0]}"));
+    // //print("  geo is ${events}");
   }
 
   String _getText(xml.XmlElement element, String tagName) {
@@ -206,16 +206,16 @@ class EventController extends GetxController {
     try {
       List<Event> localEvents = await EventTable.fetchEvents();
       events.assignAll(localEvents);
-      //  print("Loaded ${localEvents.length} events from database");
+      //  //print("Loaded ${localEvents.length} events from database");
 
       // Extract unique wkf and tid values
       Set<String> wkfSet = localEvents.map((event) => event.wkf).toSet();
       Set<String> tidSet = localEvents.map((event) => event.tid).toSet();
       Set<String> pidSet = localEvents.map((event) => event.pid).toSet();
 
-      print("wkfset $wkfSet");
-      print("tidSer :$tidSet");
-      print("pidSet $pidSet");
+      //print("wkfset $wkfSet");
+      //print("tidSer :$tidSet");
+      //print("pidSet $pidSet");
       // Fetch all names and categories in batch
       Map<String, String?> FetchedStatus =
           await StatusTable.fetchNamesByIds(wkfSet.toList());
@@ -234,10 +234,10 @@ class EventController extends GetxController {
       priorityId.value = await fetchedValuePid;
       priorityColorsId.value = await fetchedColorPid;
       // Log all data
-      print("Names: ${nameMap.value}");
-      print("Categories: ${categoryMap.value}");
-      print("priorityId: ${priorityId.value}");
-      print("priorityColorsId: ${priorityColorsId.value}");
+      //print("Names: ${nameMap.value}");
+      //print("Categories: ${categoryMap.value}");
+      //print("priorityId: ${priorityId.value}");
+      //print("priorityColorsId: ${priorityColorsId.value}");
     } catch (e) {
       print("Error loading events from database: $e");
     } finally {

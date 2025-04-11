@@ -4,21 +4,13 @@ import 'package:ace_routes/controller/eform_data_controller.dart';
 import 'package:ace_routes/controller/event_controller.dart';
 import 'package:ace_routes/controller/loginController.dart';
 import 'package:ace_routes/controller/map_controller.dart';
-import 'package:ace_routes/controller/pubnub/pubnub_service.dart';
 import 'package:ace_routes/controller/status_updated_controller.dart';
 import 'package:ace_routes/core/Constants.dart';
 import 'package:ace_routes/core/colors/Constants.dart';
-import 'package:ace_routes/database/Tables/api_data_table.dart';
-import 'package:ace_routes/database/Tables/event_table.dart';
-import 'package:ace_routes/database/Tables/login_response_table.dart';
-import 'package:ace_routes/database/Tables/terms_data_table.dart';
-import 'package:ace_routes/database/Tables/version_api_table.dart';
-import 'package:ace_routes/model/login_model/login_response.dart';
 import 'package:ace_routes/view/audio.dart';
 import 'package:ace_routes/view/e_from.dart';
 import 'package:ace_routes/view/part.dart';
 import 'package:ace_routes/view/pic_upload_screen.dart';
-import 'package:ace_routes/view/picture_view_screen.dart';
 import 'package:ace_routes/view/signature_scree.dart';
 import 'package:ace_routes/view/status_screen.dart';
 import 'package:ace_routes/view/summary_screen.dart';
@@ -26,12 +18,10 @@ import 'package:ace_routes/view/vehicle_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:ace_routes/view/drawer.dart';
 import 'package:ace_routes/controller/homeController.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart';
 import '../Widgets/icon_with_badge.dart';
 import '../controller/clockout/clockout_controller.dart';
 import '../controller/file_meta_controller.dart';
@@ -302,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 child: Center(
                                                   child: Text(
                                                     formatEventDate(
-                                                        event.startDate),
+                                                        event.start_date),
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: fontSizeController
@@ -316,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 height: constraints.maxWidth *
                                                     0.02), // 2% of width as spacing
                                             Text(
-                                              event.name ?? "No name",
+                                              event.nm ?? "No name",
                                               style: TextStyle(
                                                 fontSize: fontSizeController
                                                     .fontSize, // Responsive font size
@@ -507,7 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             if (index <
                                                 eventController.events.length) {
                                               return Text(
-                                                '${eventController.events[index].detail}',
+                                                '${eventController.events[index].dtl}',
                                                 style: TextStyle(
                                                   fontSize: fontSizeController
                                                       .fontSize,

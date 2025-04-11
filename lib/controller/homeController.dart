@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:ace_routes/core/colors/Constants.dart';
+import 'package:ace_routes/database/Tables/api_data_table.dart';
 import 'package:ace_routes/database/Tables/login_response_table.dart';
 import 'package:ace_routes/database/databse_helper.dart';
 import 'package:ace_routes/model/login_model/login_response.dart';
+import 'package:ace_routes/model/login_model/token_api_response.dart';
 import 'package:ace_routes/model/order_data_model.dart';
 import 'package:ace_routes/controller/pubnub/pubnub_service.dart';
 import 'package:get/get.dart';
@@ -36,6 +38,7 @@ class HomeController extends GetxController {
   Future<void> _pubnubInitialize() async {
     List<LoginResponse> loginDataList =
         await LoginResponseTable.fetchLoginResponses();
+    List<TokenApiReponse> loginResponseData = await ApiDataTable.fetchData();
 
     if (loginDataList.isEmpty) {
       print("⚠️ No login data found!");
@@ -44,9 +47,13 @@ class HomeController extends GetxController {
 
     for (var data in loginDataList) {
       subKey = data.subkey;
-      userNsp = data.nsp;
 
       print("🔑 Retrieved SubKey: $subKey");
+    }
+
+    for (var data in loginResponseData) {
+      userNsp = data.nspId;
+
       print("📡 Retrieved Namespace: $userNsp");
     }
 

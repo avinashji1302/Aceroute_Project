@@ -1,8 +1,15 @@
+import 'package:ace_routes/controller/event_controller.dart';
+import 'package:ace_routes/controller/orderNoteConroller.dart';
+import 'package:ace_routes/controller/vehicle_controller.dart';
+import 'package:ace_routes/core/colors/Constants.dart';
+import 'package:ace_routes/database/Tables/event_table.dart';
+import 'package:get/get.dart';
 import 'package:pubnub/pubnub.dart';
+import 'package:xml/xml.dart';
 
 class PubNubService {
-  late PubNub pubnub;
-  late Subscription subscription;
+  late final PubNub pubnub;
+  late final Subscription subscription;
   final String userId;
   final String namespace;
   final String subscriptionKey;
@@ -12,161 +19,229 @@ class PubNubService {
     required this.namespace,
     required this.subscriptionKey,
   }) {
-    // Initialize PubNub
     pubnub = PubNub(
       defaultKeyset: Keyset(
         subscribeKey: subscriptionKey,
         userId: UserId('$namespace-$userId'),
       ),
     );
-
-    // Subscribe to channel
     _subscribeToChannel();
-    print(
-        "✅ Initialized PubNub: UserID = $userId, SubscriptionKey = $subscriptionKey");
+    print("✅ PubNub Initialized: userId = $userId, key = $subscriptionKey");
   }
 
-  /// ✅ Subscribe to PubNub Channel
   void _subscribeToChannel() {
-    print("🔔 Subscribing to: $namespace");
-
+    print("🔔 Subscribing to channel: $namespace");
     subscription = pubnub.subscribe(channels: {namespace});
-    subscription.messages.listen((envelope) {
+
+    subscription.messages.listen((envelope) async {
       print("📩 New Message Received!");
-      print("🔹 Message Type: ${envelope.messageType}");
-      print("🔹 Payload: ${envelope.payload}");
-    });
-    // print("subscription.channels  ${subscription.channels}");
-    // // Listen for messages
-    // subscription.messages.listen((envelope) {
-    //   print("envelope");
-    //   print(envelope);
+      final payload = envelope.payload;
 
-    //   _handleMessage(envelope);
-    // });
+      try {
+        final timestamp = int.tryParse(payload['s']?.toString() ?? '0') ?? 0;
+        final senderRid = payload['u']?.toString().trim().toLowerCase() ?? '';
+        final xml = payload['x'] ?? '';
+        final keyParts = (payload['k']?.toString() ?? '').split('|');
 
-    print("envelope aafer ");
-  }
+        if (keyParts.length < 3) {
+          print("⚠️ Invalid key format: $keyParts");
+          return;
+        }
 
-  /// ✅ Handle Incoming Messages
-  void _handleMessage(Envelope envelope) {
-    print("inside handel message :::::");
-    final message = envelope.payload;
-    print("📩 New PubNub Message: $message");
+        final msgType = keyParts[0];
+        final actionType = keyParts[1];
+        final msgUserId = keyParts[2];
 
-    if (message is! Map<String, dynamic>) {
-      print("❌ Ignored: Invalid message format");
-      return;
-    }
+        const allowedMsgTypes = {
+          '14',
+          '5',
+          '6',
+          '9',
+          '13',
+          '24',
+          '27',
+          '54',
+          '58',
+          '59'
+        };
 
-    // Ignore messages from other channels
-    if (envelope.channel != namespace) {
-      print("❌ Ignored: Message is not from our namespace");
-      return;
-    }
+        if (!allowedMsgTypes.contains(msgType)) {
+          print("⚠️ Ignored: Unhandled msgType = $msgType");
+          return;
+        }
 
-    // Extract message components
-    String? k = message['k'];
-    String? u = message['u'];
-    String? s = message['s'];
-    String? x = message['x'];
+        final localUser = userId.trim().toLowerCase();
+        if (senderRid == localUser ||
+            senderRid == msgUserId.trim().toLowerCase()) {
+          print("🙅 Ignored: Message from self ($senderRid)");
+          return;
+        }
 
-    if (k == null || u == null || s == null || x == null) {
-      print("❌ Ignored: Missing required message fields");
-      return;
-    }
+        print("📤 Handling msgType = $msgType");
 
-    // Split 'k' to extract MsgType and ActionType
-    List<String> kParts = k.split('|');
-    if (kParts.length < 3) {
-      print("❌ Ignored: Invalid 'k' format");
-      return;
-    }
+        switch (msgType) {
+          case '14':
+            if (actionType == '2') {
+              print("🗑️ Deleting Order: $msgUserId");
+              // Implement delete logic if needed
+            }
 
-    int msgType = int.tryParse(kParts[0]) ?? -1;
-    int actionType = int.tryParse(kParts[1]) ?? -1;
-    String id = kParts[2];
+            final ridFromXml = _extractXmlValue(xml, 'rid');
+            if (ridFromXml != null && ridFromXml != rid) {
+              print("📤 Ignored: Order RID mismatch ($ridFromXml != $rid)");
+              return;
+            }
 
-    // Ignore messages from the same user
-    if (u.trim().toLowerCase() == userId.trim().toLowerCase()) {
-      print("❌ Ignored: Message is from the same user");
-      return;
-    }
+            if (['0', '1', '3'].contains(actionType)) {
+              await _handleOrderMessage(xml, actionType);
+            }
+            break;
 
-    // Process only relevant message types
-    List<int> validMsgTypes = [5, 6, 9, 13, 14, 24, 27];
-    if (!validMsgTypes.contains(msgType)) {
-      print("❌ Ignored: MsgType $msgType is not relevant");
-      return;
-    }
+          case '13':
+            print("📝 Order Note Changed");
+            final orderNoteController = Get.find<OrderNoteController>();
+            final vehicleController = Get.put(VehicleController(msgUserId));
 
-    // Add message to processing queue
-    _processMessage(msgType, actionType, id, x, int.tryParse(s) ?? 0);
-  }
+            await orderNoteController.fetchOrderNotesFromApi();
+            vehicleController.GetVehicleDetails();
 
-  /// ✅ Process Messages in Queue
-  List<Map<String, dynamic>> messageQueue = [];
+            break;
 
-  void _processMessage(
-      int msgType, int actionType, String id, String xml, int timestamp) {
-    // Add message to queue
-    messageQueue.add({
-      'msgType': msgType,
-      'actionType': actionType,
-      'id': id,
-      'xml': xml,
-      'timestamp': timestamp,
-    });
+          case '27':
+            print("🔄 Order Status Updated");
+            break;
 
-    // Sort messages by timestamp (ascending order)
-    messageQueue.sort((a, b) => a['timestamp'].compareTo(b['timestamp']));
+          case '24':
+            print("🔄 Gen type");
+            break;
 
-    // Process each message
-    for (var message in messageQueue) {
-      int msgType = message['msgType'];
-      int actionType = message['actionType'];
-      String id = message['id'];
-      String xml = message['xml'];
+          case '9':
+            print("🔄 Worker");
+            break;
 
-      print("🔄 Processing MsgType: $msgType, Action: $actionType, ID: $id");
+          case '6':
+            print("🔄 Part type");
+            break;
 
-      // Perform action based on ActionType
-      switch (actionType) {
-        case 0:
-          _updateData(msgType, id, xml);
-          break;
-        case 1:
-          _addData(msgType, id, xml);
-          break;
-        case 2:
-          _deleteData(msgType, id);
-          break;
-        case 3:
-          _modifyData(msgType, id, xml);
-          break;
-        default:
-          print("❌ Ignored: Unknown action type $actionType");
+          default:
+            print("⚠️ Unknown msgType: $msgType");
+        }
+
+        print(
+            "✅ Message handled at $timestamp from $senderRid with key $keyParts");
+      } catch (e) {
+        print("❌ Error while handling message: $e");
       }
+    });
+  }
+
+  Future<void> _handleOrderMessage(String xml, String actionType) async {
+    print("📦 Handling Order Message [actionType = $actionType]");
+    print("🧾 XML:\n$xml");
+
+    final orderId = _extractXmlValue(xml, 'id') ?? '';
+    final rid = _extractXmlValue(xml, 'rid') ?? '';
+    print("🔍 Parsed Order -> ID: $orderId, RID: $rid");
+
+    switch (actionType) {
+      case '0':
+        print("🛠️ Updating order...");
+        // TODO: Add update logic
+        break;
+
+      case '1':
+        print("➕ Adding new order...");
+        XmlDocument.parse(xml); // Validate XML
+        EventController().parseXmlResponse(xml);
+        Get.find<EventController>().loadEventsFromDatabase();
+
+        break;
+
+      case '3':
+        print("♻️ Partially updating order...");
+        final doc = XmlDocument.parse(xml);
+        final eventElement = doc.findElements('event').firstOrNull;
+
+        if (eventElement == null) {
+          print("❌ Missing <event> element in XML.");
+          return;
+        }
+
+        final eventId = eventElement.getElement('id')?.text ?? '';
+        if (eventId.isEmpty) {
+          print("❌ Event ID missing in XML. Cannot update.");
+          return;
+        }
+
+        final Map<String, dynamic> updatedFields = {};
+        final fieldTags = [
+          'cid',
+          'start_date',
+          'etm',
+          'end_date',
+          'nm',
+          'wkf',
+          'alt',
+          'po',
+          'inv',
+          'tid',
+          'pid',
+          'rid',
+          'ridcmt',
+          'dtl',
+          'lid',
+          'cntid',
+          'flg',
+          'est',
+          'lst',
+          'ctid',
+          'ctpnm',
+          'ltpnm',
+          'cnm',
+          'address',
+          'geo',
+          'cntnm',
+          'tel',
+          'ordfld1',
+          'ttid',
+          'cfrm',
+          'cprt',
+          'xid',
+          'cxid',
+          'tz',
+          'zip',
+          'fmeta',
+          'cimg',
+          'caud',
+          'csig',
+          'cdoc',
+          'cnot',
+          'dur',
+          'val',
+          'rgn',
+          'upd',
+          'by',
+          'znid'
+        ];
+
+        for (final tag in fieldTags) {
+          final value = eventElement.getElement(tag)?.text;
+          if (value != null) updatedFields[tag] = value.trim();
+        }
+
+        await EventTable.patchEventFields(eventId, updatedFields);
+        Get.find<EventController>().loadEventsFromDatabase();
+        print("✅ Event $eventId patched: $updatedFields");
+        break;
+
+      default:
+        print("⚠️ Unknown ActionType = $actionType");
     }
-
-    // Clear processed messages
-    messageQueue.clear();
   }
 
-  // Data Handling Methods (To be implemented)
-  void _addData(int msgType, String id, String xml) {
-    print("✅ Added Data: MsgType: $msgType, ID: $id");
-  }
-
-  void _updateData(int msgType, String id, String xml) {
-    print("✅ Updated Data: MsgType: $msgType, ID: $id");
-  }
-
-  void _deleteData(int msgType, String id) {
-    print("✅ Deleted Data: MsgType: $msgType, ID: $id");
-  }
-
-  void _modifyData(int msgType, String id, String xml) {
-    print("✅ Modified Data: MsgType: $msgType, ID: $id");
+  String? _extractXmlValue(String xml, String tag) {
+    final regex = RegExp('<$tag>(.*?)</$tag>', dotAll: true);
+    final match = regex.firstMatch(xml);
+    return match?.group(1)?.trim();
   }
 }

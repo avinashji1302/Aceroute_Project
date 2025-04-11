@@ -1,10 +1,10 @@
 class Event {
   final String id;
   final String cid;
-  final String startDate;
+  final String start_date;
   final String etm;
-  final String endDate;
-  final String name;
+  final String end_date;
+  final String nm;
   final String wkf;
   final String alt;
   final String po;
@@ -13,7 +13,7 @@ class Event {
   final String pid;
   final String rid;
   final String ridcmt;
-  final String detail;
+  final String dtl;
   final String lid;
   final String cntid;
   final String flg;
@@ -51,10 +51,10 @@ class Event {
   Event({
     required this.id,
     required this.cid,
-    required this.startDate,
+    required this.start_date,
     required this.etm,
-    required this.endDate,
-    required this.name,
+    required this.end_date,
+    required this.nm,
     required this.wkf,
     required this.alt,
     required this.po,
@@ -63,7 +63,7 @@ class Event {
     required this.pid,
     required this.rid,
     required this.ridcmt,
-    required this.detail,
+    required this.dtl,
     required this.lid,
     required this.cntid,
     required this.flg,
@@ -103,10 +103,10 @@ class Event {
     return Event(
       id: map['id'] ?? '',
       cid: map['cid'] ?? '',
-      startDate: map['start_date'] ?? '',
+      start_date: map['start_date'] ?? '',
       etm: map['etm'] ?? '',
-      endDate: map['end_date'] ?? '',
-      name: map['name'] ?? '',
+      end_date: map['end_date'] ?? '',
+      nm: map['nm'] ?? '',
       wkf: map['wkf'] ?? '',
       alt: map['alt'] ?? '',
       po: map['po'] ?? '',
@@ -115,7 +115,7 @@ class Event {
       pid: map['pid'] ?? '',
       rid: map['rid'] ?? '',
       ridcmt: map['ridcmt'] ?? '',
-      detail: map['detail'] ?? '',
+      dtl: map['dtl'] ?? '',
       lid: map['lid'] ?? '',
       cntid: map['cntid'] ?? '',
       flg: map['flg'] ?? '',
@@ -158,10 +158,10 @@ extension EventJson on Event {
     return {
       'id': id,
       'cid': cid,
-      'start_date': startDate,
+      'start_date': start_date,
       'etm': etm,
-      'end_date': endDate,
-      'name': name,
+      'end_date': end_date,
+      'nm': nm,
       'wkf': wkf,
       'alt': alt,
       'po': po,
@@ -170,7 +170,7 @@ extension EventJson on Event {
       'pid': pid,
       'rid': rid,
       'ridcmt': ridcmt,
-      'detail': detail,
+      'dtl': dtl,
       'lid': lid,
       'cntid': cntid,
       'flg': flg,
