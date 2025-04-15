@@ -95,7 +95,7 @@ class _StatusScreenState extends State<StatusScreen> {
                             print(" id is :${item.id} ");
                             Navigator.of(context).pop();
 
-                            statusControllers.GetStatusUpdate(
+                            statusControllers.getStatusUpdate(
                                 widget.oid, widget.name, item.id, item.name);
                           },
                         ),

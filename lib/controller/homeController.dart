@@ -3,23 +3,18 @@ import 'dart:async';
 import 'package:ace_routes/core/colors/Constants.dart';
 import 'package:ace_routes/database/Tables/api_data_table.dart';
 import 'package:ace_routes/database/Tables/login_response_table.dart';
-import 'package:ace_routes/database/databse_helper.dart';
 import 'package:ace_routes/model/login_model/login_response.dart';
 import 'package:ace_routes/model/login_model/token_api_response.dart';
-import 'package:ace_routes/model/order_data_model.dart';
 import 'package:ace_routes/controller/pubnub/pubnub_service.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:location/location.dart' as locationLib;
 import 'package:permission_handler/permission_handler.dart'
     as permissionHandlerLib;
 import 'package:http/http.dart' as http;
 
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart';
 
 class HomeController extends GetxController {
   final Completer<GoogleMapController> mapController = Completer();
@@ -32,7 +27,7 @@ class HomeController extends GetxController {
   void onInit() async {
     super.onInit();
     print("🚀 Initializing PubNub...");
-    await _pubnubInitialize();
+    //  await _pubnubInitialize();
   }
 
   Future<void> _pubnubInitialize() async {

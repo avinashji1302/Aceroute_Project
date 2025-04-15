@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:ace_routes/controller/background/location_service.dart';
 import 'package:ace_routes/controller/clockout/clockout_controller.dart';
+import 'package:ace_routes/controller/connectivity/dependecy_injection.dart';
+import 'package:ace_routes/controller/connectivity/network_controller.dart';
 import 'package:ace_routes/controller/eform_controller.dart';
 import 'package:ace_routes/controller/getOrderPart_controller.dart';
 import 'package:ace_routes/controller/priority_controller.dart';
 import 'package:ace_routes/database/Tables/OrderTypeDataTable.dart';
 import 'package:ace_routes/database/Tables/event_table.dart';
 import 'package:ace_routes/database/Tables/prority_table.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -24,12 +27,6 @@ import '../model/login_model/token_api_response.dart';
 import 'all_terms_controller.dart';
 import 'orderNoteConroller.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:xml/xml.dart' as xml;
-import 'package:intl/intl.dart';
-
 class EventController extends GetxController {
   final allTermsController = Get.put(AllTermsController());
   final getOrderPart = Get.put(GetOrderPartController());
@@ -38,6 +35,7 @@ class EventController extends GetxController {
 
   final EFormController eForm = Get.put(EFormController());
   final PriorityController priority = Get.put(PriorityController());
+
   final ClockOut clockOut = Get.put(ClockOut());
 
   var events = <Event>[].obs;
@@ -61,19 +59,30 @@ class EventController extends GetxController {
     await fetchEvents();
     isLoading(false); // Show loading spinner
 
+    // if (await hasInternet()) {
+    //   print(hasInternet());
+    //   print("INternet is here ::: calling the api");
+    //   await fetchEvents(); // API call
+    // } else {
+    //   print("INternet is here ::: calling the api offline mode ");
+    //   await loadEventsFromDatabase(); // Local fallback
+    // }
+
     //Fetching and saving note in db
     await orderNoteController.fetchDetailsFromDb();
     await orderNoteController.fetchOrderNotesFromApi();
-    //print("above part type::");
-    //Order Part
-    //  await getOrderPart.fetchOrderData();
-
-    //Gen Type for EForm data
 
     //  await eForm.GetGenOrderDataForForm();
     await initializeService(); // Start background service
     await clockOut.executeAction(tid: 1);
+
+    Get.find<NetworkController>().enableSyncAfterLogin();
   }
+
+  // Future<bool> hasInternet() async {
+  //   final result = await Connectivity().checkConnectivity();
+  //   return result != ConnectivityResult.none;
+  // }
 
   Future<void> loadAllTerms() async {
     //print("Loading all terms...");
@@ -111,16 +120,16 @@ class EventController extends GetxController {
 
       if (response.statusCode == 200) {
         String xmlString = await response.stream.bytesToString();
-      //   //print("Raw XML response: $xmlString");
+        print("Raw XML response: $xmlString");
 
         // Parse and store the events
         parseXmlResponse(xmlString);
         await loadEventsFromDatabase();
       } else {
-        //print("Error fetching events: ${response.reasonPhrase}");
+        print("Error fetching events: ${response.statusCode}");
       }
     } catch (e) {
-      //print("Error fetching events: $e");
+      print("Error fetching events: $e");
     } finally {
       isLoading(false);
     }
@@ -191,8 +200,6 @@ class EventController extends GetxController {
 
     events.assignAll(fetchedEvents);
     // //print("Fetched and stored ${fetchedEvents.length} events");
-    // //print(jsonEncode("${fetchedEvents[0]}"));
-    // //print("  geo is ${events}");
   }
 
   String _getText(xml.XmlElement element, String tagName) {
@@ -213,8 +220,6 @@ class EventController extends GetxController {
       Set<String> tidSet = localEvents.map((event) => event.tid).toSet();
       Set<String> pidSet = localEvents.map((event) => event.pid).toSet();
 
-      //print("wkfset $wkfSet");
-      //print("tidSer :$tidSet");
       //print("pidSet $pidSet");
       // Fetch all names and categories in batch
       Map<String, String?> FetchedStatus =
@@ -233,11 +238,6 @@ class EventController extends GetxController {
       categoryMap.value = await fetchedCategory;
       priorityId.value = await fetchedValuePid;
       priorityColorsId.value = await fetchedColorPid;
-      // Log all data
-      //print("Names: ${nameMap.value}");
-      //print("Categories: ${categoryMap.value}");
-      //print("priorityId: ${priorityId.value}");
-      //print("priorityColorsId: ${priorityColorsId.value}");
     } catch (e) {
       print("Error loading events from database: $e");
     } finally {
