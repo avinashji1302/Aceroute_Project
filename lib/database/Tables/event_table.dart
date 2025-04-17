@@ -131,7 +131,7 @@ class EventTable {
     int result = await db.update(
       'events', // Replace with your table name
       {
-        'dtl': updatedData['dtl'], // Update the 'wkf' column
+        'dtl': updatedData['details'], // Update the 'wkf' column
         'po': updatedData['registration'], // Update the 'status' column
         'inv': updatedData['odometer'],
         'alt': updatedData['faultDesc'], // Update the 'amount' column
@@ -140,7 +140,7 @@ class EventTable {
       whereArgs: [orderId], // Arguments for the WHERE clause
     );
 
-    print("succesfullt");
+    print("succesfullt ${updatedData['notes']}");
   }
 
 //update via pubnub

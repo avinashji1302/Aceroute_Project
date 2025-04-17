@@ -1,7 +1,8 @@
+import 'package:ace_routes/controller/connectivity/network_controller.dart';
 import 'package:ace_routes/database/Tables/order_note_table.dart';
+import 'package:ace_routes/database/offlineTables/vehicle_sync_table.dart';
 import 'package:ace_routes/model/order_note_model.dart';
 import 'package:ace_routes/view/home_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../core/colors/Constants.dart';
 import '../database/Tables/event_table.dart';
@@ -11,6 +12,7 @@ import 'package:http/http.dart' as http;
 
 class VehicleController extends GetxController {
   final EventController eventController = Get.put(EventController());
+  final NetworkController networkController = Get.find<NetworkController>();
   final String id; //order id
   VehicleController(this.id);
 
@@ -73,7 +75,8 @@ class VehicleController extends GetxController {
         end_date = localEvent.end_date;
         nm = localEvent.nm;
 
-        //  print("wkf for edit: ${wkf}");
+        print(
+            "wkf for edit: ${wkf} $nm  ${vehicleDetail.value} ${notes.value} ${localEvent.nm}");
       } else {
         print("No event data found for ID 77611.");
       }
@@ -83,11 +86,13 @@ class VehicleController extends GetxController {
   }
 
   //Edit controller .........................
-  Future<void> edit(Map<String, String> updatedData) async {
+  Future<void> edit(Map<String, String> updatedData,
+      {bool fromSync = false}) async {
+    print("wkf for edit: ${wkf} $nm  ${vehicleDetail.value} ${notes.value}");
     // print("wkf in edit $wkf");
     // print("Updated Data: $updatedData  ${updatedData['faultDesc']}");
     final url =
-        "https://$baseUrl/mobi?token=$token&nspace=demo.com&geo=$geo&rid=$rid&action=editorder&id=$id&cid=$cid&wkf=$wkf&egeo=$geo&stmp=2700000&orderStartTime=39600000&orderEndTime=42300000&start_date=$star_date&end_date=$end_date&nm=54321&dtl=${updatedData['details']}&alt=${updatedData['faultDesc']}&po=${updatedData['registration']}&inv=${updatedData['odometer']}&tid=$tid&pid=$pid&xml=0&note=${updatedData['notes']}";
+        "https://$baseUrl/mobi?token=$token&nspace=demo.com&geo=$geo&rid=$rid&action=editorder&id=$id&cid=$cid&wkf=$wkf&egeo=$geo&stmp=2700000&orderStartTime=39600000&orderEndTime=42300000&start_date=$star_date&end_date=$end_date&nm=$nm&dtl=${updatedData['details']}&alt=${updatedData['faultDesc']}&po=${updatedData['registration']}&inv=${updatedData['odometer']}&tid=$tid&pid=$pid&xml=0&note=${updatedData['notes']}";
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -98,7 +103,55 @@ class VehicleController extends GetxController {
         //update the database with current data
         EventTable.updateVehicle(id, updatedData);
         eventController.loadEventsFromDatabase();
-        Get.to(() => HomeScreen());
+        if (!fromSync) {
+          print("online:::::");
+          Get.back();
+        }
+
+        print("offline sync:::::");
+      }
+    } catch (e) {
+      print("Editable is $e");
+    }
+  }
+
+  Future<void> offlineEdit(Map<String, String> updatedData,
+      {bool fromSync = false}) async {
+    //update the database with current data
+    print(
+        "wkf for ccccedit: ${wkf} $nm  ${vehicleDetail.value} ${notes.value}");
+    EventTable.updateVehicle(id, updatedData);
+    eventController.loadEventsFromDatabase();
+    print("something :::");
+    if (networkController.isOnline.value == false) {
+      print("User is offline so updaing in database");
+      VehicleSyncTable.insert(id, updatedData);
+      // EventTable.updateVehicle(id, updatedData);
+      // eventController.loadEventsFromDatabase();
+
+      Get.back();
+      print("offline mode:::");
+      return;
+    }
+    final url =
+        "https://$baseUrl/mobi?token=$token&nspace=demo.com&geo=$geo&rid=$rid&action=editorder&id=$id&cid=$cid&wkf=$wkf&egeo=$geo&stmp=2700000&orderStartTime=39600000&orderEndTime=42300000&start_date=$star_date&end_date=$end_date&nm=&dtl=${updatedData['details']}&alt=${updatedData['faultDesc']}&po=${updatedData['registration']}&inv=${updatedData['odometer']}&tid=$tid&pid=$pid&xml=0&note=${updatedData['notes']}";
+    print("something 2:::");
+    try {
+      print("something 3 :::");
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        print(response.body);
+        print("edit success");
+
+        //update the database with current data
+        // EventTable.updateVehicle(id, updatedData);
+        // eventController.loadEventsFromDatabase();
+        if (!fromSync) {
+          print("online:::::");
+          Get.back();
+        }
+
+        print("offline sync:::::");
       }
     } catch (e) {
       print("Editable is $e");

@@ -89,10 +89,13 @@ class _VehicleDetailsState extends State<VehicleDetails> {
               print("Fault Description: ${_vehicleController.faultDesc.value}");
 
               // Call API to save the updated data
-              await _vehicleController.edit(updatedData);
+              //  await _vehicleController.edit(updatedData);
+              await _vehicleController.offlineEdit(updatedData);
 
               // Navigate to HomeScreen (you can comment this line if you want it to stay on the current screen)
-              Get.to(HomeScreen());
+              //  Get.to(HomeScreen());
+
+              print("go home:::");
             },
           ),
         ],

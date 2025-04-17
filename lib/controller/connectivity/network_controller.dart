@@ -1,5 +1,7 @@
 import 'package:ace_routes/controller/status_updated_controller.dart';
+import 'package:ace_routes/controller/vehicle_controller.dart';
 import 'package:ace_routes/database/offlineTables/status_sync_table.dart';
+import 'package:ace_routes/database/offlineTables/vehicle_sync_table.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -61,6 +63,7 @@ class NetworkController extends GetxController {
 
       if (canSync) {
         await _syncData();
+        await _syncVehicleData();
       } else {
         print("⚠️ Skipping sync — login not completed.");
       }
@@ -88,16 +91,40 @@ class NetworkController extends GetxController {
     }
   }
 
+  Future<void> _syncVehicleData() async {
+    try {
+      List<Map<String, dynamic>> unsyncedData =
+          await VehicleSyncTable.getUnsynced();
+
+      for (var data in unsyncedData) {
+        String orderId = data['order_id'];
+
+        Map<String, String> payload = {
+          'faultDesc': data['alt'] ?? '',
+          'registration': data['po'] ?? '',
+          'details': data['dtl'] ?? '',
+          'odometer': data['inv'] ?? '',
+          'notes': data['note'] ?? '',
+        };
+        final vehicleController =
+            Get.put(VehicleController(orderId), tag: orderId);
+        await vehicleController.offlineEdit(payload, fromSync: true);
+        await VehicleSyncTable.markSynced(data['id']);
+
+        print("✅ Vehicle data synced for order_id: $orderId");
+      }
+    } catch (e) {
+      print("❌ Error syncing vehicle data: $e");
+    }
+  }
+
   /// Call this method **after login is complete** to allow syncing
   void enableSyncAfterLogin() {
     canSync = true;
     print("🔓 Syncing enabled.");
     if (isOnline.value) {
       _syncData();
+      _syncVehicleData();
     }
   }
 }
-
-
-
-

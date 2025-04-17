@@ -3,6 +3,7 @@ import 'package:ace_routes/database/Tables/eform_data_table.dart';
 import 'package:ace_routes/database/Tables/file_meta_table.dart';
 import 'package:ace_routes/database/Tables/prority_table.dart';
 import 'package:ace_routes/database/offlineTables/status_sync_table.dart';
+import 'package:ace_routes/database/offlineTables/vehicle_sync_table.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -66,13 +67,16 @@ class DatabaseHelper {
 
       //offline
       StatusSyncTable.onCreate(db), // 👈 Add this here
+      VehicleSyncTable.onCreate(db)
     ]);
     print("All tables created successfully.");
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     // print("Upgrading database...");
-
+    if (oldVersion < 14) {
+      await VehicleSyncTable.onCreate(db);
+    }
     if (oldVersion < 13) {
       await StatusSyncTable.onCreate(db);
     }

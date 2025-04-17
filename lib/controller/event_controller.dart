@@ -112,7 +112,7 @@ class EventController extends GetxController {
     var url =
         "https://$baseUrl/mobi?token=$token&nspace=$nsp&geo=$geo&rid=$rid&action=getorders&tz=Asia/Kolkata&from=${formattedCurrentDate}&to=${formattedSecondDate}";
 
-    // //print("Fetching events from URL: $url");
+    print("Fetching events from URL: $url");
 
     try {
       var request = http.Request('GET', Uri.parse(url));
